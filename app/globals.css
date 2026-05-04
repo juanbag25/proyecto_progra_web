@@ -1,0 +1,142 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html,
+  body {
+    background-color: #0a0f1a;
+    color: #ffffff;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background-color: rgba(0, 240, 255, 0.25);
+    color: #ffffff;
+  }
+}
+
+@layer components {
+  .glass {
+    background-color: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 1rem;
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.06),
+      0 24px 48px -16px rgba(0, 0, 0, 0.5);
+  }
+
+  .glass-strong {
+    background-color: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 1rem;
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.08),
+      0 32px 64px -24px rgba(0, 0, 0, 0.6);
+  }
+
+  .tabular {
+    font-feature-settings: 'tnum' 1, 'zero' 1, 'ss01' 1;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Custom range slider — Tailwind cannot reach pseudo-elements */
+.fitlist-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  background: transparent;
+  outline: none;
+  cursor: pointer;
+}
+
+.fitlist-slider::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--track-bg, rgba(255, 255, 255, 0.08));
+}
+
+.fitlist-slider::-moz-range-track {
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--track-bg, rgba(255, 255, 255, 0.08));
+}
+
+.fitlist-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  margin-top: -8px;
+  border-radius: 9999px;
+  background: #00f0ff;
+  border: 2px solid #0a0f1a;
+  box-shadow:
+    0 0 0 1px rgba(0, 240, 255, 0.6),
+    0 0 24px rgba(0, 240, 255, 0.55);
+  cursor: grab;
+  transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.fitlist-slider::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 9999px;
+  background: #00f0ff;
+  border: 2px solid #0a0f1a;
+  box-shadow:
+    0 0 0 1px rgba(0, 240, 255, 0.6),
+    0 0 24px rgba(0, 240, 255, 0.55);
+  cursor: grab;
+  transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.fitlist-slider:hover::-webkit-slider-thumb {
+  transform: scale(1.12);
+}
+.fitlist-slider:hover::-moz-range-thumb {
+  transform: scale(1.12);
+}
+.fitlist-slider:active::-webkit-slider-thumb {
+  cursor: grabbing;
+  transform: scale(1.18);
+}
+.fitlist-slider:active::-moz-range-thumb {
+  cursor: grabbing;
+  transform: scale(1.18);
+}
+
+/* Native select chevron suppression */
+.fitlist-select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: none;
+}
+
+/* Scrollbar — slim and dark */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 240, 255, 0.2);
+}
