@@ -89,7 +89,7 @@
 
 ## P3.B — Cards de los 7 steps + review + edit
 
-````prompt
+```prompt
 🎯 TAREA: 3.2 a 3.10 — UI completa del onboarding swipeable
 
 📚 CONTEXTO OBLIGATORIO A LEER:
@@ -179,9 +179,10 @@
 - components/onboarding/ReviewStep.tsx
 - app/api/onboarding/complete/route.ts
 - app/app/profile/page.tsx
-````
+```
 
 ---
 
 ## Cierre de fase
+
 La fricción del onboarding es decisiva para la retención. Pedile al usuario que lo pruebe en mobile (DevTools responsive) y dé visto bueno antes de Fase 4.

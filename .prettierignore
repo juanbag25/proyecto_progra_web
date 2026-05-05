@@ -1,0 +1,9 @@
+node_modules
+.next
+dist
+build
+out
+db/migrations
+package-lock.json
+.vercel
+*.tsbuildinfo

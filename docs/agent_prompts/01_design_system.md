@@ -67,7 +67,7 @@
 
 ## P1.B — Biblioteca de componentes UI + showcase
 
-````prompt
+```prompt
 🎯 TAREA: 1.3, 1.4, 1.5 — Componentes UI base, mesh gradient, página de showcase
 
 📚 CONTEXTO OBLIGATORIO A LEER:
@@ -130,9 +130,10 @@
 - components/ui/SwipeableCard.tsx
 - app/dev/components/page.tsx
 - package.json (deps potenciales: @radix-ui/*, framer-motion — sólo con aprobación del usuario)
-````
+```
 
 ---
 
 ## Cierre de fase
+
 Al terminar P1.B, pedir al usuario que abra `/dev/components` y dé visto bueno antes de pasar a Fase 2. La calidad visual de esta fase determina toda la sensación de la app.

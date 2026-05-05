@@ -6,7 +6,7 @@
 
 ## P7.A — Layout principal + item card
 
-````prompt
+```prompt
 🎯 TAREA: 7.1, 7.2 — Layout de /app/list + componente ItemCard
 
 📚 CONTEXTO OBLIGATORIO A LEER:
@@ -69,13 +69,13 @@
 - lib/format.ts
 - app/api/shopping-list/items/[id]/check/route.ts
 - public/supermarket_logos/{carrefour,coto,jumbo,dia}.svg (placeholder SVGs si no existen)
-````
+```
 
 ---
 
 ## P7.B — Animaciones + radial charts en tiempo real
 
-````prompt
+```prompt
 🎯 TAREA: 7.3, 7.4, 7.5, 7.6 — Animación check-off, radial charts macros + budget, header sticky
 
 📚 CONTEXTO OBLIGATORIO A LEER:
@@ -142,13 +142,13 @@ PARTE 5 — Performance
 - components/dashboard/BudgetRing.tsx
 - components/dashboard/SummaryHeader.tsx
 - app/app/list/page.tsx (modificar)
-````
+```
 
 ---
 
 ## P7.C — Estados, exports, historial
 
-````prompt
+```prompt
 🎯 TAREA: 7.7, 7.8, 7.9 — Empty/loading/error states, share/export, vista de historial
 
 📚 CONTEXTO OBLIGATORIO A LEER:
@@ -202,9 +202,10 @@ PARTE 5 — Performance
 - app/app/history/page.tsx
 - app/app/list/[id]/page.tsx
 - app/app/list/page.tsx (modificar para integrar estados)
-````
+```
 
 ---
 
 ## Cierre de fase
+
 Esta es **la** fase que hace o rompe la sensación premium. Pedirle al usuario una sesión visual conjunta antes de pasar a Fase 8.

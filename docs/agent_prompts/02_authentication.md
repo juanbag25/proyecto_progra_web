@@ -138,4 +138,5 @@ PARTE 7 — Test de seguridad
 ---
 
 ## Cierre de fase
+
 Pedirle al usuario que pruebe el flujo completo (sign up → confirmar → login → logout) en local **y** en Vercel preview. Si ambos funcionan, OK para Fase 3.

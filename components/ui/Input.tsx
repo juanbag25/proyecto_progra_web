@@ -33,7 +33,7 @@ export function Input({
         <input
           id={inputId}
           className={[
-            'w-full rounded-xl border border-hairline bg-white/[0.03] px-4 py-3 font-sans text-sm text-white placeholder:text-white/35 shadow-inset-hairline backdrop-blur-glass transition-all duration-300 ease-premium',
+            'w-full rounded-xl border border-hairline bg-white/[0.03] px-4 py-3 font-sans text-sm text-white shadow-inset-hairline backdrop-blur-glass transition-all duration-300 ease-premium placeholder:text-white/35',
             'hover:border-white/10',
             'focus:border-accent-cyan/70 focus:bg-white/[0.05] focus:outline-none focus:ring-2 focus:ring-accent-cyan/25',
             leadingIcon ? 'pl-11' : '',
@@ -48,9 +48,7 @@ export function Input({
           </span>
         )}
       </div>
-      {helperText && (
-        <span className="font-sans text-xs text-white/40">{helperText}</span>
-      )}
+      {helperText && <span className="font-sans text-xs text-white/40">{helperText}</span>}
     </label>
   );
 }

@@ -12,14 +12,49 @@ import { GroceryCard } from '@/components/ui/GroceryCard';
 import { RadialProgress } from '@/components/ui/RadialProgress';
 
 const colorTokens = [
-  { name: 'Midnight Blue', hex: '#0A0F1A', role: 'canvas / base', swatchClassName: 'bg-canvas-base' },
-  { name: 'Rich Charcoal', hex: '#121212', role: 'canvas / raised', swatchClassName: 'bg-canvas-raised' },
-  { name: 'Elevated Gray', hex: '#1E1E24', role: 'canvas / elevated', swatchClassName: 'bg-canvas-elevated' },
-  { name: 'Electric Cyan', hex: '#00F0FF', role: 'accent / primary', swatchClassName: 'bg-accent-cyan' },
-  { name: 'Vibrant Mint', hex: '#00E676', role: 'accent / success', swatchClassName: 'bg-accent-mint' },
+  {
+    name: 'Midnight Blue',
+    hex: '#0A0F1A',
+    role: 'canvas / base',
+    swatchClassName: 'bg-canvas-base',
+  },
+  {
+    name: 'Rich Charcoal',
+    hex: '#121212',
+    role: 'canvas / raised',
+    swatchClassName: 'bg-canvas-raised',
+  },
+  {
+    name: 'Elevated Gray',
+    hex: '#1E1E24',
+    role: 'canvas / elevated',
+    swatchClassName: 'bg-canvas-elevated',
+  },
+  {
+    name: 'Electric Cyan',
+    hex: '#00F0FF',
+    role: 'accent / primary',
+    swatchClassName: 'bg-accent-cyan',
+  },
+  {
+    name: 'Vibrant Mint',
+    hex: '#00E676',
+    role: 'accent / success',
+    swatchClassName: 'bg-accent-mint',
+  },
   { name: 'Coral', hex: '#FF6B6B', role: 'warn / over-budget', swatchClassName: 'bg-warn-coral' },
-  { name: 'Action Orange', hex: '#FF8E53', role: 'warn / milestone', swatchClassName: 'bg-warn-orange' },
-  { name: 'Hairline', hex: 'rgba(255,255,255,0.05)', role: 'border / subtle', swatchClassName: 'bg-white/[0.05]' },
+  {
+    name: 'Action Orange',
+    hex: '#FF8E53',
+    role: 'warn / milestone',
+    swatchClassName: 'bg-warn-orange',
+  },
+  {
+    name: 'Hairline',
+    hex: 'rgba(255,255,255,0.05)',
+    role: 'border / subtle',
+    swatchClassName: 'bg-white/[0.05]',
+  },
 ];
 
 const dietaryOptions = [
@@ -37,7 +72,15 @@ const supermarketOptions = [
   { value: 'dia', label: 'Día' },
 ];
 
-function SectionLabel({ kicker, title, children }: { kicker: string; title: string; children?: React.ReactNode }) {
+function SectionLabel({
+  kicker,
+  title,
+  children,
+}: {
+  kicker: string;
+  title: string;
+  children?: React.ReactNode;
+}) {
   return (
     <header className="mb-10 flex flex-col gap-3">
       <H5>{kicker}</H5>
@@ -62,14 +105,46 @@ export default function DesignSystemPage() {
             </span>
           </Link>
           <div className="hidden items-center gap-2 md:flex">
-            <a href="#typography" className="rounded-full px-3 py-1.5 font-sans text-xs text-white/60 transition hover:text-white">Typography</a>
-            <a href="#color" className="rounded-full px-3 py-1.5 font-sans text-xs text-white/60 transition hover:text-white">Color</a>
-            <a href="#buttons" className="rounded-full px-3 py-1.5 font-sans text-xs text-white/60 transition hover:text-white">Buttons</a>
-            <a href="#forms" className="rounded-full px-3 py-1.5 font-sans text-xs text-white/60 transition hover:text-white">Forms</a>
-            <a href="#cards" className="rounded-full px-3 py-1.5 font-sans text-xs text-white/60 transition hover:text-white">Cards</a>
-            <a href="#data" className="rounded-full px-3 py-1.5 font-sans text-xs text-white/60 transition hover:text-white">Data</a>
+            <a
+              href="#typography"
+              className="rounded-full px-3 py-1.5 font-sans text-xs text-white/60 transition hover:text-white"
+            >
+              Typography
+            </a>
+            <a
+              href="#color"
+              className="rounded-full px-3 py-1.5 font-sans text-xs text-white/60 transition hover:text-white"
+            >
+              Color
+            </a>
+            <a
+              href="#buttons"
+              className="rounded-full px-3 py-1.5 font-sans text-xs text-white/60 transition hover:text-white"
+            >
+              Buttons
+            </a>
+            <a
+              href="#forms"
+              className="rounded-full px-3 py-1.5 font-sans text-xs text-white/60 transition hover:text-white"
+            >
+              Forms
+            </a>
+            <a
+              href="#cards"
+              className="rounded-full px-3 py-1.5 font-sans text-xs text-white/60 transition hover:text-white"
+            >
+              Cards
+            </a>
+            <a
+              href="#data"
+              className="rounded-full px-3 py-1.5 font-sans text-xs text-white/60 transition hover:text-white"
+            >
+              Data
+            </a>
           </div>
-          <Button variant="outline" size="sm">v0.1.0</Button>
+          <Button variant="outline" size="sm">
+            v0.1.0
+          </Button>
         </div>
       </nav>
 
@@ -81,13 +156,15 @@ export default function DesignSystemPage() {
             Foundation Kit
           </span>
           <H1 className="mt-6 max-w-4xl">
-            The visual <span className="bg-accent-gradient bg-clip-text text-transparent">language</span> of FitList.
+            The visual{' '}
+            <span className="bg-accent-gradient bg-clip-text text-transparent">language</span> of
+            FitList.
           </H1>
           <Body className="mt-6 max-w-2xl text-lg">
-            A premium, dark-mode design system built for nutritional intelligence at scale.
-            Every primitive on this page is a real, production-ready React component — wired to
-            tokenized brand colors, Outfit + Inter typography, glassmorphism, and 300ms
-            cubic-bezier micro-animations.
+            A premium, dark-mode design system built for nutritional intelligence at scale. Every
+            primitive on this page is a real, production-ready React component — wired to tokenized
+            brand colors, Outfit + Inter typography, glassmorphism, and 300ms cubic-bezier
+            micro-animations.
           </Body>
 
           <div className="mt-12 grid gap-6 md:grid-cols-3">
@@ -96,22 +173,29 @@ export default function DesignSystemPage() {
               <H4 className="mt-2">Next.js + Tailwind</H4>
               <Body className="mt-2 text-sm">
                 App Router, TypeScript, zero runtime CSS-in-JS. Brand tokens live in
-                <code className="mx-1 rounded bg-white/[0.06] px-1.5 py-0.5 font-mono text-xs text-accent-cyan">tailwind.config.js</code>.
+                <code className="mx-1 rounded bg-white/[0.06] px-1.5 py-0.5 font-mono text-xs text-accent-cyan">
+                  tailwind.config.js
+                </code>
+                .
               </Body>
             </GlassCard>
             <GlassCard variant="strong">
               <Caption>Aesthetic</Caption>
               <H4 className="mt-2">Premium · Dynamic</H4>
               <Body className="mt-2 text-sm">
-                Inspired by Nike Run Club & Apple Fitness — sleek, alive, trustworthy. No
-                generic medical-app vibes anywhere on this surface.
+                Inspired by Nike Run Club & Apple Fitness — sleek, alive, trustworthy. No generic
+                medical-app vibes anywhere on this surface.
               </Body>
             </GlassCard>
             <GlassCard variant="strong">
               <Caption>Animation</Caption>
               <H4 className="mt-2">300ms · ease-premium</H4>
               <Body className="mt-2 text-sm">
-                Custom <code className="mx-1 rounded bg-white/[0.06] px-1.5 py-0.5 font-mono text-xs text-accent-cyan">cubic-bezier(0.16, 1, 0.3, 1)</code> applied to every hover, focus, and state change.
+                Custom{' '}
+                <code className="mx-1 rounded bg-white/[0.06] px-1.5 py-0.5 font-mono text-xs text-accent-cyan">
+                  cubic-bezier(0.16, 1, 0.3, 1)
+                </code>{' '}
+                applied to every hover, focus, and state change.
               </Body>
             </GlassCard>
           </div>
@@ -155,15 +239,21 @@ export default function DesignSystemPage() {
             <div className="grid gap-6 border-t border-hairline pt-8 md:grid-cols-3">
               <div className="flex flex-col gap-2">
                 <Caption>Budget · cyan</Caption>
-                <DataNumber variant="cyan" size="lg">$84.200</DataNumber>
+                <DataNumber variant="cyan" size="lg">
+                  $84.200
+                </DataNumber>
               </div>
               <div className="flex flex-col gap-2">
                 <Caption>Protein · mint</Caption>
-                <DataNumber variant="mint" size="lg">128g</DataNumber>
+                <DataNumber variant="mint" size="lg">
+                  128g
+                </DataNumber>
               </div>
               <div className="flex flex-col gap-2">
                 <Caption>Over limit · coral</Caption>
-                <DataNumber variant="coral" size="lg">92%</DataNumber>
+                <DataNumber variant="coral" size="lg">
+                  92%
+                </DataNumber>
               </div>
             </div>
           </GlassCard>
@@ -172,10 +262,19 @@ export default function DesignSystemPage() {
         {/* COLOR ----------------------------------------------------------- */}
         <section id="color" className="mb-32 scroll-mt-24">
           <SectionLabel kicker="02 — Color" title="Tokenized for intent, not for hex.">
-            Every color is exposed as a Tailwind utility under a semantic prefix
-            (<code className="rounded bg-white/[0.06] px-1.5 py-0.5 font-mono text-xs text-accent-cyan">canvas-*</code>,
-            <code className="ml-1 rounded bg-white/[0.06] px-1.5 py-0.5 font-mono text-xs text-accent-cyan">accent-*</code>,
-            <code className="ml-1 rounded bg-white/[0.06] px-1.5 py-0.5 font-mono text-xs text-accent-cyan">warn-*</code>) so authoring intent reads at a glance.
+            Every color is exposed as a Tailwind utility under a semantic prefix (
+            <code className="rounded bg-white/[0.06] px-1.5 py-0.5 font-mono text-xs text-accent-cyan">
+              canvas-*
+            </code>
+            ,
+            <code className="ml-1 rounded bg-white/[0.06] px-1.5 py-0.5 font-mono text-xs text-accent-cyan">
+              accent-*
+            </code>
+            ,
+            <code className="ml-1 rounded bg-white/[0.06] px-1.5 py-0.5 font-mono text-xs text-accent-cyan">
+              warn-*
+            </code>
+            ) so authoring intent reads at a glance.
           </SectionLabel>
 
           <GlassCard className="p-10">
@@ -198,49 +297,81 @@ export default function DesignSystemPage() {
         {/* BUTTONS --------------------------------------------------------- */}
         <section id="buttons" className="mb-32 scroll-mt-24">
           <SectionLabel kicker="03 — Buttons" title="Four variants. Three sizes. Alive on hover.">
-            Hover any button — scale lifts to 1.02–1.03, a colored glow blooms behind, and the
-            press settles back to 0.97 with the same easing curve. Disabled state drops opacity
-            to 40% and disables pointer events.
+            Hover any button — scale lifts to 1.02–1.03, a colored glow blooms behind, and the press
+            settles back to 0.97 with the same easing curve. Disabled state drops opacity to 40% and
+            disables pointer events.
           </SectionLabel>
 
           <GlassCard className="space-y-10 p-10">
             <div className="flex flex-col gap-5">
               <Caption>Primary · accent gradient + cyan glow</Caption>
               <div className="flex flex-wrap items-center gap-4">
-                <Button variant="primary" size="sm">Generate List</Button>
-                <Button variant="primary" size="md">Generate Weekly List</Button>
-                <Button variant="primary" size="lg">Generate Optimized Weekly List</Button>
-                <Button variant="primary" disabled>Disabled</Button>
+                <Button variant="primary" size="sm">
+                  Generate List
+                </Button>
+                <Button variant="primary" size="md">
+                  Generate Weekly List
+                </Button>
+                <Button variant="primary" size="lg">
+                  Generate Optimized Weekly List
+                </Button>
+                <Button variant="primary" disabled>
+                  Disabled
+                </Button>
               </div>
             </div>
 
             <div className="flex flex-col gap-5">
               <Caption>Secondary · elevated glass</Caption>
               <div className="flex flex-wrap items-center gap-4">
-                <Button variant="secondary" size="sm">Edit</Button>
-                <Button variant="secondary" size="md">Edit Profile</Button>
-                <Button variant="secondary" size="lg">Edit Profile & Goals</Button>
-                <Button variant="secondary" disabled>Disabled</Button>
+                <Button variant="secondary" size="sm">
+                  Edit
+                </Button>
+                <Button variant="secondary" size="md">
+                  Edit Profile
+                </Button>
+                <Button variant="secondary" size="lg">
+                  Edit Profile & Goals
+                </Button>
+                <Button variant="secondary" disabled>
+                  Disabled
+                </Button>
               </div>
             </div>
 
             <div className="flex flex-col gap-5">
               <Caption>Outline · cyan border, fills on hover</Caption>
               <div className="flex flex-wrap items-center gap-4">
-                <Button variant="outline" size="sm">Skip</Button>
-                <Button variant="outline" size="md">Skip for Now</Button>
-                <Button variant="outline" size="lg">Skip This Week</Button>
-                <Button variant="outline" disabled>Disabled</Button>
+                <Button variant="outline" size="sm">
+                  Skip
+                </Button>
+                <Button variant="outline" size="md">
+                  Skip for Now
+                </Button>
+                <Button variant="outline" size="lg">
+                  Skip This Week
+                </Button>
+                <Button variant="outline" disabled>
+                  Disabled
+                </Button>
               </div>
             </div>
 
             <div className="flex flex-col gap-5">
               <Caption>Ghost · invisible, surfaces on hover</Caption>
               <div className="flex flex-wrap items-center gap-4">
-                <Button variant="ghost" size="sm">Cancel</Button>
-                <Button variant="ghost" size="md">Cancel Onboarding</Button>
-                <Button variant="ghost" size="lg">Cancel and Sign Out</Button>
-                <Button variant="ghost" disabled>Disabled</Button>
+                <Button variant="ghost" size="sm">
+                  Cancel
+                </Button>
+                <Button variant="ghost" size="md">
+                  Cancel Onboarding
+                </Button>
+                <Button variant="ghost" size="lg">
+                  Cancel and Sign Out
+                </Button>
+                <Button variant="ghost" disabled>
+                  Disabled
+                </Button>
               </div>
             </div>
           </GlassCard>
@@ -249,9 +380,9 @@ export default function DesignSystemPage() {
         {/* FORM INPUTS ----------------------------------------------------- */}
         <section id="forms" className="mb-32 scroll-mt-24">
           <SectionLabel kicker="04 — Form Inputs" title="Glass surfaces, cyan focus rings.">
-            All inputs share a single visual language: 5%-opacity surface, hairline border,
-            cyan focus glow, 300ms transition. The slider sports a custom glowing thumb and
-            cyan→mint track fill that tracks the value live.
+            All inputs share a single visual language: 5%-opacity surface, hairline border, cyan
+            focus glow, 300ms transition. The slider sports a custom glowing thumb and cyan→mint
+            track fill that tracks the value live.
           </SectionLabel>
 
           <GlassCard className="space-y-8 p-10">
@@ -302,7 +433,9 @@ export default function DesignSystemPage() {
         <section id="cards" className="mb-32 scroll-mt-24">
           <SectionLabel kicker="05 — Cards" title="Glassmorphism, with a satisfying check-off.">
             Tap the
-            <span className="mx-1 inline-flex h-5 w-5 items-center justify-center rounded-full border border-hairline bg-white/5 align-middle text-[11px] text-white/70">+</span>
+            <span className="mx-1 inline-flex h-5 w-5 items-center justify-center rounded-full border border-hairline bg-white/5 align-middle text-[11px] text-white/70">
+              +
+            </span>
             on any grocery card — strikethrough sweeps in, the item dims, and the tile rotates
             slightly. This is the same interaction used on the real shopping list screen.
           </SectionLabel>
@@ -346,23 +479,38 @@ export default function DesignSystemPage() {
         {/* DATA VIZ -------------------------------------------------------- */}
         <section id="data" className="mb-32 scroll-mt-24">
           <SectionLabel kicker="06 — Data Visualization" title="Radial rings that pop on dark.">
-            Each ring fills from 0 to its target value on mount with a 1.2s premium ease.
-            Ring color shifts variant based on context — cyan for budget, mint for goals hit,
-            coral when you&apos;re inside the danger zone (&gt; 90% spend or over a macro cap).
+            Each ring fills from 0 to its target value on mount with a 1.2s premium ease. Ring color
+            shifts variant based on context — cyan for budget, mint for goals hit, coral when
+            you&apos;re inside the danger zone (&gt; 90% spend or over a macro cap).
           </SectionLabel>
 
           <GlassCard className="p-10">
             <div className="grid gap-10 md:grid-cols-3">
               <div className="flex flex-col items-center gap-4 rounded-2xl border border-hairline bg-white/[0.02] p-8">
-                <RadialProgress value={68} label="Budget Used" variant="cyan" sublabel="of $85.000" />
+                <RadialProgress
+                  value={68}
+                  label="Budget Used"
+                  variant="cyan"
+                  sublabel="of $85.000"
+                />
                 <Caption>Healthy</Caption>
               </div>
               <div className="flex flex-col items-center gap-4 rounded-2xl border border-hairline bg-white/[0.02] p-8">
-                <RadialProgress value={84} label="Protein Goal" variant="mint" sublabel="128 / 152 g" />
+                <RadialProgress
+                  value={84}
+                  label="Protein Goal"
+                  variant="mint"
+                  sublabel="128 / 152 g"
+                />
                 <Caption>On track</Caption>
               </div>
               <div className="flex flex-col items-center gap-4 rounded-2xl border border-hairline bg-white/[0.02] p-8">
-                <RadialProgress value={95} label="Calorie Limit" variant="coral" sublabel="2380 / 2500 kcal" />
+                <RadialProgress
+                  value={95}
+                  label="Calorie Limit"
+                  variant="coral"
+                  sublabel="2380 / 2500 kcal"
+                />
                 <Caption>Near limit</Caption>
               </div>
             </div>
@@ -374,12 +522,17 @@ export default function DesignSystemPage() {
           <span className="font-display text-base font-extrabold tracking-tightest">
             Fit<span className="bg-accent-gradient bg-clip-text text-transparent">List</span>
           </span>
-          <Caption>
-            Built on Next.js · Tailwind · React · Supabase · Vercel
-          </Caption>
+          <Caption>Built on Next.js · Tailwind · React · Supabase · Vercel</Caption>
           <span className="font-sans text-xs text-white/35">
-            Brand tokens live in <code className="rounded bg-white/[0.04] px-1.5 py-0.5 font-mono text-accent-cyan">tailwind.config.js</code>.
-            Glass utilities live in <code className="rounded bg-white/[0.04] px-1.5 py-0.5 font-mono text-accent-cyan">app/globals.css</code>.
+            Brand tokens live in{' '}
+            <code className="rounded bg-white/[0.04] px-1.5 py-0.5 font-mono text-accent-cyan">
+              tailwind.config.js
+            </code>
+            . Glass utilities live in{' '}
+            <code className="rounded bg-white/[0.04] px-1.5 py-0.5 font-mono text-accent-cyan">
+              app/globals.css
+            </code>
+            .
           </span>
         </footer>
       </div>

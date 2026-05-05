@@ -33,10 +33,7 @@ export function H2({ children, className }: Common) {
 export function H3({ children, className }: Common) {
   return (
     <h3
-      className={cx(
-        'font-display text-2xl font-semibold tracking-tighter2 text-white',
-        className,
-      )}
+      className={cx('font-display text-2xl font-semibold tracking-tighter2 text-white', className)}
     >
       {children}
     </h3>

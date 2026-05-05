@@ -19,8 +19,7 @@ const variants: Record<ButtonVariant, string> = {
     'bg-canvas-elevated text-white border border-hairline shadow-inset-hairline hover:border-white/20 hover:bg-white/[0.06] hover:scale-[1.02] active:scale-[0.98]',
   outline:
     'bg-transparent text-accent-cyan border border-accent-cyan/60 hover:bg-accent-cyan/10 hover:border-accent-cyan hover:shadow-glow-cyan hover:scale-[1.02] active:scale-[0.98]',
-  ghost:
-    'bg-transparent text-white/80 hover:bg-white/[0.06] hover:text-white active:scale-[0.98]',
+  ghost: 'bg-transparent text-white/80 hover:bg-white/[0.06] hover:text-white active:scale-[0.98]',
 };
 
 const sizes: Record<ButtonSize, string> = {

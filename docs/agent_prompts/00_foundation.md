@@ -6,7 +6,7 @@
 
 ## P0.A — Inicializar Next.js + TypeScript + Tailwind + estructura base
 
-````prompt
+```prompt
 🎯 TAREA: 0.1, 0.2, 0.7 — Bootstrap del proyecto Next.js con TypeScript y Tailwind
 
 📚 CONTEXTO OBLIGATORIO A LEER:
@@ -50,7 +50,7 @@
 - .gitignore
 - CLAUDE.md
 - (carpetas vacías con .gitkeep): components/ui, lib/supabase, db/migrations, scrapers, tests
-````
+```
 
 ---
 
@@ -111,7 +111,7 @@
 
 ## P0.C — Supabase cloud + Vercel deploy
 
-````prompt
+```prompt
 🎯 TAREA: 0.4, 0.6 — Conectar Supabase cloud + deploy automático en Vercel
 
 📚 CONTEXTO OBLIGATORIO A LEER:
@@ -166,7 +166,7 @@ PARTE 3 — Migración cero
 - app/api/health/route.ts
 - db/migrations/000_init.sql
 - package.json (deps)
-````
+```
 
 ---
 

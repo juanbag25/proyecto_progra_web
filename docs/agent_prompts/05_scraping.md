@@ -6,7 +6,7 @@
 
 ## P5.A — Investigación + setup de MCPs de scraping
 
-````prompt
+```prompt
 🎯 TAREA: 5.1, 5.9 — Investigación por cadena, decisión de stack de scraping, compliance
 
 📚 CONTEXTO OBLIGATORIO A LEER:
@@ -66,7 +66,7 @@ PARTE 3 — Compliance check
 - docs/scraping/research.md
 - docs/scraping/compliance.md
 - .env.local (FIRECRAWL_API_KEY)
-````
+```
 
 ---
 
@@ -284,4 +284,5 @@ PARTE 4 — Verificación
 ---
 
 ## Cierre de fase
+
 Validar end-to-end: el primer run del cron en Vercel debe poblar la DB. Si las cadenas más difíciles fallan, documentar y dejar para post-v1; con 2 de 4 cadenas funcionando podemos seguir.

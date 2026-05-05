@@ -229,4 +229,5 @@ PARTE 5 — Tests
 ---
 
 ## Cierre de fase
+
 Pedirle al usuario que pruebe la generación con 2-3 perfiles diferentes (gym bro, mujer fat-loss, vegano) y juzgue si los outputs son sensatos. Si la lista parece "rara" (pura bondiola, o demasiado uniforme), iterar el scoring antes de pasar a UI.

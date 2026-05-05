@@ -55,12 +55,7 @@ export function RadialProgress({
   return (
     <div className="flex flex-col items-center gap-4">
       <div className="relative" style={{ width: size, height: size }}>
-        <svg
-          width={size}
-          height={size}
-          viewBox={`0 0 ${size} ${size}`}
-          className="-rotate-90"
-        >
+        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="-rotate-90">
           <defs>
             <linearGradient id={`grad-${gradId}`} x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor={from} />

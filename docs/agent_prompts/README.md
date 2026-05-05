@@ -7,6 +7,7 @@ Esta carpeta contiene los **prompts listos para copy-paste** que se le pasan a u
 ## 1. Cómo usar esta guía
 
 ### Workflow para cada prompt
+
 1. **Abrí el archivo de la fase** que toca implementar (ej: `00_foundation.md`).
 2. **Copiá el bloque de prompt** (todo el texto dentro del bloque ` ```prompt ` ).
 3. **Pegalo en una sesión nueva del agente implementador**.
@@ -15,6 +16,7 @@ Esta carpeta contiene los **prompts listos para copy-paste** que se le pasan a u
 6. **Si el prompt requiere una acción manual tuya** (ej: crear cuenta Supabase, agregar API key), va a estar marcado con el bloque `🙋 ACCIÓN HUMANA REQUERIDA` — el agente debe pausar y avisarte.
 
 ### Orden recomendado
+
 Las fases son **secuenciales**. No empieces la fase N+1 hasta que la fase N tenga todos sus criterios de aceptación cumplidos.
 
 Dentro de una misma fase, los prompts están numerados en orden de ejecución (ej: `P0.A` → `P0.B` → `P0.C`).
@@ -26,44 +28,56 @@ Dentro de una misma fase, los prompts están numerados en orden de ejecución (e
 Antes de empezar, instalá / habilitá lo siguiente. Algunos son skills locales de Claude Code, otros son MCPs externos.
 
 ### Skills locales (ya disponibles)
-| Skill | Cuándo se usa | Para qué |
-|-------|---------------|----------|
-| `init` | Fase 0 | Inicializar `CLAUDE.md` con contexto del codebase |
-| `update-config` | Fase 0, 5 | Configurar `settings.json`, hooks, env vars |
-| `less-permission-prompts` | Después de Fase 0 | Reducir interrupciones de permisos |
-| `claude-api` | Fase 4 | Si decidimos usar Claude API como LLM nutricional |
-| `simplify` | Después de cada fase | Revisar calidad y refactor del código |
-| `review` | Post-implementación | Code review formal de PR |
-| `security-review` | Fase 2, 5, 9 | Auditoría de seguridad (auth, scraping, launch) |
-| `anthropic-skills:theme-factory` | Fase 1 | Apoyo en theming de showcase pages |
-| `anthropic-skills:skill-creator` | Si surge | Crear skills custom para FitList si las tareas se repiten |
+
+| Skill                            | Cuándo se usa        | Para qué                                                  |
+| -------------------------------- | -------------------- | --------------------------------------------------------- |
+| `init`                           | Fase 0               | Inicializar `CLAUDE.md` con contexto del codebase         |
+| `update-config`                  | Fase 0, 5            | Configurar `settings.json`, hooks, env vars               |
+| `less-permission-prompts`        | Después de Fase 0    | Reducir interrupciones de permisos                        |
+| `claude-api`                     | Fase 4               | Si decidimos usar Claude API como LLM nutricional         |
+| `simplify`                       | Después de cada fase | Revisar calidad y refactor del código                     |
+| `review`                         | Post-implementación  | Code review formal de PR                                  |
+| `security-review`                | Fase 2, 5, 9         | Auditoría de seguridad (auth, scraping, launch)           |
+| `anthropic-skills:theme-factory` | Fase 1               | Apoyo en theming de showcase pages                        |
+| `anthropic-skills:skill-creator` | Si surge             | Crear skills custom para FitList si las tareas se repiten |
 
 ### MCPs externos a instalar (críticos para Fase 5 — scraping)
 
 #### Supabase MCP — `supabase/agent-skills`
+
 Skill oficial de Supabase para Next.js, Auth, RLS, migrations. **Recomendado para Fases 2, 3, 4, 5, 6, 8.**
+
 - Repo: <https://github.com/supabase/agent-skills>
 - Docs: <https://supabase.com/docs/guides/getting-started/ai-skills>
 
 #### Firecrawl MCP — para scraping con JS rendering
+
 Maneja JavaScript, paginación, sitios anti-bot. Servicio managed (free tier disponible).
+
 - Repo: <https://github.com/firecrawl/firecrawl-mcp-server>
 - Docs: <https://docs.firecrawl.dev/mcp-server>
 - **Decisión:** primera opción para Carrefour, Coto, Jumbo, Dia. Si el costo escala, evaluar Playwright local como fallback.
 
 #### Playwright MCP — fallback para scraping local sin costo
+
 Browser automation real, sin credenciales, todo local. Usa snapshots de accesibilidad (4x menos tokens).
+
 - Doc: <https://claudefa.st/blog/tools/mcp-extensions/browser-automation>
 
 #### Web Scraper Skill — `yfe404/web-scraper`
+
 Selecciona automáticamente la estrategia correcta (Cheerio para HTML estático, Playwright para SPA). Útil como capa de abstracción.
+
 - Repo: <https://github.com/yfe404/web-scraper>
 
 #### Browserbase MCP — opcional, sólo si nos cazan los anti-bot
+
 Cloud-hosted browsers con rotación de proxies, CAPTCHA solving, fingerprint management.
+
 - Para sitios protegidos por Cloudflare. **No instalar a priori** — sólo si los otros fallan.
 
 ### Directorios para descubrir más
+
 - <https://claudemarketplaces.com/skills> — 4,200+ skills de Claude Code.
 - <https://mcpservers.org/agent-skills> — Agent Skills Library.
 - <https://fastmcp.me/MCP/Explore?category=Browser+Automation> — MCPs de browser automation.
@@ -74,7 +88,7 @@ Cloud-hosted browsers con rotación de proxies, CAPTCHA solving, fingerprint man
 
 Cada prompt sigue esta estructura:
 
-````
+```
 🎯 TAREA: [ID y nombre del roadmap]
 
 📚 CONTEXTO OBLIGATORIO A LEER:
@@ -96,7 +110,7 @@ Cada prompt sigue esta estructura:
 
 📁 ARCHIVOS A CREAR / MODIFICAR:
 - [paths exactos]
-````
+```
 
 ---
 
@@ -117,18 +131,18 @@ Cada prompt incluye estas reglas como recordatorio, pero las dejo acá centraliz
 
 ## 5. Índice de fases
 
-| Archivo | Fase | Cantidad de prompts |
-|---------|------|---------------------|
-| [`00_foundation.md`](./00_foundation.md) | Foundation & Tooling | 3 |
-| [`01_design_system.md`](./01_design_system.md) | Design System & Brand | 2 |
-| [`02_authentication.md`](./02_authentication.md) | Authentication | 1 |
-| [`03_onboarding.md`](./03_onboarding.md) | Onboarding (Interview) | 2 |
-| [`04_nutrition_engine.md`](./04_nutrition_engine.md) | AI Nutrition Engine | 2 |
-| [`05_scraping.md`](./05_scraping.md) | Web Scraping Layer | 3 |
-| [`06_optimization.md`](./06_optimization.md) | Optimization Algorithm | 2 |
-| [`07_shopping_list.md`](./07_shopping_list.md) | Shopping List UI | 3 |
-| [`08_feedback_loop.md`](./08_feedback_loop.md) | Weekly Feedback Loop | 1 |
-| [`09_polish_launch.md`](./09_polish_launch.md) | Polish, Tests & Launch | 3 |
+| Archivo                                              | Fase                   | Cantidad de prompts |
+| ---------------------------------------------------- | ---------------------- | ------------------- |
+| [`00_foundation.md`](./00_foundation.md)             | Foundation & Tooling   | 3                   |
+| [`01_design_system.md`](./01_design_system.md)       | Design System & Brand  | 2                   |
+| [`02_authentication.md`](./02_authentication.md)     | Authentication         | 1                   |
+| [`03_onboarding.md`](./03_onboarding.md)             | Onboarding (Interview) | 2                   |
+| [`04_nutrition_engine.md`](./04_nutrition_engine.md) | AI Nutrition Engine    | 2                   |
+| [`05_scraping.md`](./05_scraping.md)                 | Web Scraping Layer     | 3                   |
+| [`06_optimization.md`](./06_optimization.md)         | Optimization Algorithm | 2                   |
+| [`07_shopping_list.md`](./07_shopping_list.md)       | Shopping List UI       | 3                   |
+| [`08_feedback_loop.md`](./08_feedback_loop.md)       | Weekly Feedback Loop   | 1                   |
+| [`09_polish_launch.md`](./09_polish_launch.md)       | Polish, Tests & Launch | 3                   |
 
 **Total: 22 prompts** distribuidos en 10 fases.
 
@@ -147,6 +161,7 @@ El agente implementador **DEBE** pausar y pedirte intervención manual cuando:
 - Termine una fase y necesite tu **aprobación visual** antes de pasar a la siguiente.
 
 En todos estos casos, el agente debe escribirte un mensaje claro indicando:
+
 1. Qué necesita.
 2. Pasos exactos para hacerlo.
 3. Qué hacer cuando esté listo (ej: "pegame la API key acá y continúo").

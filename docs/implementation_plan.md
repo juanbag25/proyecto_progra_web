@@ -1,9 +1,11 @@
 # FitList — Implementation Roadmap
 
 ## Objetivo de este documento
+
 Descomponer la construcción de FitList en fases secuenciales con tareas granulares, lo suficientemente acotadas como para que cada una pueda ser ejecutada por un único agente implementador en una sesión enfocada. Este documento es la fuente para promptear esos agentes.
 
 ## Cómo leer este roadmap
+
 - **Las fases son secuenciales por defecto** (cada una construye sobre la anterior). Las tareas dentro de una fase a veces pueden paralelizarse.
 - Cada tarea incluye: descripción, archivos afectados (orientativo), criterios de aceptación.
 - Antes de implementar cualquier UI, el agente debe leer `docs/project_definition/05_aesthetics.md` y `04_brand_identity.md`.
@@ -12,18 +14,18 @@ Descomponer la construcción de FitList en fases secuenciales con tareas granula
 
 ## Fases
 
-| # | Fase | Resumen |
-|---|------|---------|
-| 0 | Foundation & Tooling | Bootstrap Next.js + Tailwind + Supabase + Vercel |
-| 1 | Design System & Brand Layer | Theme, fuentes, componentes UI base, glassmorphism |
-| 2 | Authentication | Sign up / login / logout / RLS / middleware |
-| 3 | Onboarding (The Interview) | Flow swipeable de captura de perfil |
-| 4 | AI Nutrition Engine | Cálculo de macros + micros semanales vía LLM + fórmulas |
-| 5 | Web Scraping Layer | DB viva de productos por cadena (Carrefour/Coto/Jumbo/Dia) |
-| 6 | Optimization Algorithm | Generación de la shopping list óptima |
-| 7 | Shopping List UI & Dashboard | UX premium con check-off animado y rings en tiempo real |
-| 8 | Weekly Feedback Loop | Recalibración semanal por peso/adherencia |
-| 9 | Polish, Testing & Launch | E2E, a11y, performance, SEO, deploy producción |
+| #   | Fase                         | Resumen                                                    |
+| --- | ---------------------------- | ---------------------------------------------------------- |
+| 0   | Foundation & Tooling         | Bootstrap Next.js + Tailwind + Supabase + Vercel           |
+| 1   | Design System & Brand Layer  | Theme, fuentes, componentes UI base, glassmorphism         |
+| 2   | Authentication               | Sign up / login / logout / RLS / middleware                |
+| 3   | Onboarding (The Interview)   | Flow swipeable de captura de perfil                        |
+| 4   | AI Nutrition Engine          | Cálculo de macros + micros semanales vía LLM + fórmulas    |
+| 5   | Web Scraping Layer           | DB viva de productos por cadena (Carrefour/Coto/Jumbo/Dia) |
+| 6   | Optimization Algorithm       | Generación de la shopping list óptima                      |
+| 7   | Shopping List UI & Dashboard | UX premium con check-off animado y rings en tiempo real    |
+| 8   | Weekly Feedback Loop         | Recalibración semanal por peso/adherencia                  |
+| 9   | Polish, Testing & Launch     | E2E, a11y, performance, SEO, deploy producción             |
 
 ---
 
@@ -32,6 +34,7 @@ Descomponer la construcción de FitList en fases secuenciales con tareas granula
 **Meta:** Repo arrancando con Next.js + Tailwind + Supabase + deploy automático en Vercel.
 
 ### Tareas
+
 - **0.1** Inicializar proyecto Next.js (App Router). Decidir TS vs JS (recomendado: TS por preferencia del usuario).
 - **0.2** Instalar y configurar Tailwind CSS + PostCSS.
 - **0.3** Configurar ESLint + Prettier + `.editorconfig`.
@@ -51,6 +54,7 @@ Descomponer la construcción de FitList en fases secuenciales con tareas granula
 **Meta:** Codificar la identidad (dark mode, glass, acentos) como theme Tailwind + componentes reutilizables.
 
 ### Tareas
+
 - **1.1** Configurar `tailwind.config.ts` con paleta de marca (`charcoal #121212`, `midnight #0A0F1A`, `cyan #00F0FF`, `mint #00E676`, `coral #FF6B6B`, `coral-warm #FF8E53`) y fuentes Outfit/Inter.
 - **1.2** Estilos globales en `globals.css`: dark mode forzado, tabular nums, scroll suave, selección de texto custom.
 - **1.3** Componentes UI base (`components/ui/`):
@@ -75,6 +79,7 @@ Descomponer la construcción de FitList en fases secuenciales con tareas granula
 **Meta:** Usuarios pueden registrarse, ingresar, salir, de forma segura. Datos protegidos con RLS.
 
 ### Tareas
+
 - **2.1** Configurar Supabase Auth (email/password como mínimo).
 - **2.2** Página `/sign-up` y `/login` con estilo de marca.
 - **2.3** Flow de logout.
@@ -94,6 +99,7 @@ Descomponer la construcción de FitList en fases secuenciales con tareas granula
 **Meta:** Flow swipeable de cards que captura el perfil completo.
 
 ### Tareas
+
 - **3.1** State machine del onboarding (steps + persistencia draft por step).
 - **3.2** Step 1 — Biometría (edad, peso, altura, género).
 - **3.3** Step 2 — Actividad (frecuencia de ejercicio, tipo, lifestyle sedentario/activo/atleta).
@@ -116,6 +122,7 @@ Descomponer la construcción de FitList en fases secuenciales con tareas granula
 **Meta:** Calcular macro + micro targets semanales a partir del perfil, usando LLM + fórmulas.
 
 ### Tareas
+
 - **4.1** Elegir proveedor LLM (OpenAI, Anthropic o Gemini); manejar API key server-side.
 - **4.2** Diseñar system prompt para el "AI Nutritionist" (rol, evidencia, formato JSON estricto).
 - **4.3** Implementar TDEE (Mifflin-St Jeor recomendado).
@@ -136,6 +143,7 @@ Descomponer la construcción de FitList en fases secuenciales con tareas granula
 **Meta:** DB de productos viva (precio + nutrición) por supermercado y región.
 
 ### Tareas
+
 - **5.1** Investigar cada cadena (Carrefour, Coto, Jumbo, Dia): ¿hay catálogo público / API? ¿Scrape DOM con Puppeteer? Documentar.
 - **5.2** Scraper module por cadena. Interface común: `searchProducts(query, region)`, `getProductDetails(productId)`.
 - **5.3** Schema normalizado `Product`: `name, brand, chain, region, price, unit, weight_g, calories_per_100g, protein_per_100g, carbs_per_100g, fats_per_100g, fiber_per_100g, micros_json, last_seen_at, source_url`.
@@ -157,6 +165,7 @@ Descomponer la construcción de FitList en fases secuenciales con tareas granula
 **Meta:** Generar shopping list que cumpla macros/micros bajo presupuesto, respetando preferencias.
 
 ### Tareas
+
 - **6.1** Formalizar el problema: variables de decisión (cantidad por producto), función objetivo, constraints (presupuesto, macros, restricciones, preferencias).
 - **6.2** Decidir enfoque: LP solver (`javascript-lp-solver` o similar) vs heurístico greedy + scoring vs híbrido.
 - **6.3** Filtrado de candidatos (excluir alergenos / restricciones / hated).
@@ -178,6 +187,7 @@ Descomponer la construcción de FitList en fases secuenciales con tareas granula
 **Meta:** UX premium con check-off animado y dashboard de progreso en tiempo real.
 
 ### Tareas
+
 - **7.1** Layout `/app/list`: dashboard sticky arriba + lista debajo.
 - **7.2** Item card: imagen del producto (PNG transparente), nombre, marca, cantidad, precio, logo SVG del super.
 - **7.3** Animación de check-off: tachado con swoop + dim del item.
@@ -199,6 +209,7 @@ Descomponer la construcción de FitList en fases secuenciales con tareas granula
 **Meta:** Recalibración semanal según peso + adherencia.
 
 ### Tareas
+
 - **8.1** Trigger de fin de semana (date-based o manual desde UI).
 - **8.2** Form de feedback: "¿Terminaste la comida?", peso actual, ajuste de presupuesto, tweaks de preferencias.
 - **8.3** Lógica de recalibración: ajustar TDEE/targets según delta de peso vs esperado.
@@ -217,6 +228,7 @@ Descomponer la construcción de FitList en fases secuenciales con tareas granula
 **Meta:** Production-ready v1.
 
 ### Tareas
+
 - **9.1** E2E tests (Playwright) para flujos críticos: signup → onboarding → generar lista → check-off.
 - **9.2** Auditoría a11y (WCAG AA): keyboard nav, screen reader labels, contraste sobre dark mode.
 - **9.3** Performance: Lighthouse >90, image optimization, font preload.
@@ -234,6 +246,7 @@ Descomponer la construcción de FitList en fases secuenciales con tareas granula
 ---
 
 ## Cross-cutting (aplica a TODAS las fases)
+
 - **Branding:** todo cambio de UI debe revisar `docs/project_definition/05_aesthetics.md` antes de implementar.
 - **Stack discipline:** mantenerse en Next.js + Tailwind + Supabase + Vercel + LLM API. Nuevas deps requieren justificación explícita.
 - **RLS-first:** toda tabla Supabase nace con RLS habilitado.
@@ -241,6 +254,7 @@ Descomponer la construcción de FitList en fases secuenciales con tareas granula
 - **Tono:** copys deben sonar "personal trainer experto pero amigo" (ver `04_brand_identity.md`).
 
 ## Riesgos y preguntas abiertas
+
 - **Scraping legal:** ToS de cada cadena puede forzar fallback a input manual o partner APIs.
 - **Costo LLM:** posiblemente caché agresivo o fallback determinístico para perfiles repetidos.
 - **Performance del optimizer:** índices y tamaño de DB importan; si LP es muy lento, heurístico greedy.
@@ -248,6 +262,7 @@ Descomponer la construcción de FitList en fases secuenciales con tareas granula
 - **Cobertura nutricional de scraping:** los supers no siempre publican micros; puede requerir DB enriquecida con tabla USDA o equivalente local.
 
 ## Cómo se usa este roadmap para promptear agentes
+
 1. Identificar la tarea (ej: 1.3 — `RadialProgress` component).
 2. Promptear con: contexto de marca + tarea específica + archivos a tocar + criterios de aceptación.
 3. Verificar contra criterios de aceptación antes de pasar a la siguiente.

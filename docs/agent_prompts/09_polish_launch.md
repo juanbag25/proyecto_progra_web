@@ -6,7 +6,7 @@
 
 ## P9.A — Tests E2E con Playwright
 
-````prompt
+```prompt
 🎯 TAREA: 9.1 — Tests E2E para flujos críticos
 
 📚 CONTEXTO OBLIGATORIO A LEER:
@@ -56,13 +56,13 @@
 - tests/e2e/feedback.spec.ts
 - .github/workflows/e2e.yml (opcional)
 - package.json (scripts + dev deps)
-````
+```
 
 ---
 
 ## P9.B — Accesibilidad + Performance + SEO
 
-````prompt
+```prompt
 🎯 TAREA: 9.2, 9.3, 9.4 — A11y audit, perf optimization, SEO básico
 
 📚 CONTEXTO OBLIGATORIO A LEER:
@@ -124,13 +124,13 @@ PARTE 4 — Code review
 - public/og.png
 - next.config.mjs (image optimization)
 - (varios — fixes de a11y y perf en componentes)
-````
+```
 
 ---
 
 ## P9.C — Monitoring, analytics, legal, deploy productivo
 
-````prompt
+```prompt
 🎯 TAREA: 9.5 a 9.9 — Sentry + analytics + legal + deploy + smoke test
 
 📚 CONTEXTO OBLIGATORIO A LEER:
@@ -234,11 +234,13 @@ PARTE 6 — Lanzamiento
 - components/Footer.tsx
 - next.config.mjs (security headers)
 - docs/launch_checklist.md
-````
+```
 
 ---
 
 ## Cierre del proyecto
+
 Si llegamos acá, **FitList v1 está vivo en producción**. Empieza la fase de iteración basada en uso real:
+
 - Métricas a vigilar: tasa de completion del onboarding, % de usuarios que generan ≥2 listas, costo LLM por user/mes, errores de scraping por cadena.
 - Próximos pasos (post-v1): app móvil, integraciones con Mercado Libre / PedidosYa / Rappi para checkout directo, recetas a partir de la lista, modo familiar (compartir lista entre usuarios).

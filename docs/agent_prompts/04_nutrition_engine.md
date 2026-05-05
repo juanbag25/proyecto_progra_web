@@ -213,4 +213,5 @@ PARTE 8 — Verificación
 ---
 
 ## Cierre de fase
+
 Pedirle al usuario que revise el panel de targets para uno de sus perfiles de prueba y juzgue si el output suena científicamente sano y empático.

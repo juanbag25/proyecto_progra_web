@@ -11,8 +11,8 @@ export default function HomePage() {
           Fit<span className="bg-accent-gradient bg-clip-text text-transparent">List</span>
         </h1>
         <p className="mt-6 max-w-xl text-balance font-sans text-base text-white/70 md:text-lg">
-          Premium nutritional intelligence. Weekly grocery lists generated from your budget,
-          your goals, and your local supermarket — without the daily calorie diary.
+          Premium nutritional intelligence. Weekly grocery lists generated from your budget, your
+          goals, and your local supermarket — without the daily calorie diary.
         </p>
         <Link
           href="/design-system"

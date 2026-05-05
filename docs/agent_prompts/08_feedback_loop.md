@@ -128,4 +128,5 @@ PARTE 6 — Gráfico de progreso
 ---
 
 ## Cierre de fase
+
 Esta fase cierra el ciclo del producto. A partir de acá la app es "self-sustaining" semana a semana. Pedirle al usuario una sesión de revisión del flow completo (sign up → onboarding → primera lista → feedback simulado → segunda lista) antes de Fase 9.

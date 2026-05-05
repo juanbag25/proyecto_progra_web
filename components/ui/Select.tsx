@@ -11,14 +11,7 @@ interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   helperText?: string;
 }
 
-export function Select({
-  label,
-  options,
-  helperText,
-  className = '',
-  id,
-  ...rest
-}: SelectProps) {
+export function Select({ label, options, helperText, className = '', id, ...rest }: SelectProps) {
   const selectId = id ?? label?.replace(/\s+/g, '-').toLowerCase();
   return (
     <label htmlFor={selectId} className="flex flex-col gap-2">
@@ -59,9 +52,7 @@ export function Select({
           </svg>
         </span>
       </div>
-      {helperText && (
-        <span className="font-sans text-xs text-white/40">{helperText}</span>
-      )}
+      {helperText && <span className="font-sans text-xs text-white/40">{helperText}</span>}
     </label>
   );
 }

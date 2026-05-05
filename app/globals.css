@@ -45,7 +45,10 @@
   }
 
   .tabular {
-    font-feature-settings: 'tnum' 1, 'zero' 1, 'ss01' 1;
+    font-feature-settings:
+      'tnum' 1,
+      'zero' 1,
+      'ss01' 1;
     font-variant-numeric: tabular-nums;
   }
 }
