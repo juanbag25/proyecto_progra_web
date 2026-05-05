@@ -1,0 +1,27 @@
+-- =============================================================================
+-- 000_init.sql — FitList migration baseline (intentionally a no-op)
+-- =============================================================================
+--
+-- Conventions for this folder:
+--
+--   1. Sequential numbering: 000_init, 001_<feature>, 002_<feature>, ...
+--      Numbers never get reused; do not rewrite history.
+--
+--   2. One migration per feature / scope. Do not bundle unrelated changes
+--      (e.g. don't mix users + products in the same file).
+--
+--   3. Idempotency: every statement uses `IF [NOT] EXISTS` so re-running a
+--      migration in dev or against a partially-applied DB is safe.
+--
+--   4. RLS-first: every `CREATE TABLE` MUST be followed by
+--          ALTER TABLE <name> ENABLE ROW LEVEL SECURITY;
+--      and at least one explicit policy. No exceptions. (See CLAUDE.md.)
+--
+--   5. Apply order: run files top-to-bottom in numeric order via the
+--      Supabase SQL Editor (Phase 0/1) or `supabase db push` (Phase 5+).
+--
+-- The first migration with real schema is `001_users.sql`, added in Phase 2.
+-- This file exists only to anchor the convention and document it.
+-- =============================================================================
+
+-- No DDL in this migration.
