@@ -1,175 +1,79 @@
 # Fase 0 — Foundation & Tooling
 
-3 prompts. Bootstrap del proyecto: Next.js + TS + Tailwind + Supabase + Vercel.
+**Estado: ✅ DONE.** Las 3 sub-tareas (P0.A, P0.B, P0.C) ya fueron implementadas. Esta página queda como referencia histórica del trabajo hecho y como spec retro-aplicado por si hay que reproducir o auditar.
+
+| Sub-fase | Commit                                                                 | Resumen                                                                       |
+| -------- | ---------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| P0.A     | `14986c1` — _P0.A: scaffold placeholder dirs and CLAUDE.md_            | Estructura de carpetas + `.gitkeep` + `CLAUDE.md` con la "ley de marca"       |
+| P0.B     | `fc8977f` — _P0.B: Prettier + ESLint + .editorconfig + env scaffold_   | Toolchain de formato/lint + `.env.example` con todas las variables previstas  |
+| P0.C     | `62c0a47` — _P0.C: Supabase SSR clients + /api/health + migration baseline_ | Clientes Supabase server/browser, health check, primer SQL                |
+
+> **Importante:** El scaffold real difiere en algunos detalles del spec literal que escribí originalmente. Por ejemplo: `tailwind.config.js` (no `.ts`), naming semántico de tokens (`canvas.*`, `accent.*`, `warn.*` en vez de planos), separación `font-display` vs `font-sans`. Esa divergencia es **intencional y mejor que mi spec** — está cementada en `CLAUDE.md` como ley de marca. Si retomás esta fase, seguí lo que dice `CLAUDE.md`, no lo que dicen los prompts originales más abajo.
 
 ---
 
-## P0.A — Inicializar Next.js + TypeScript + Tailwind + estructura base
+## P0.A — Inicialización + estructura base [DONE]
 
-```prompt
-🎯 TAREA: 0.1, 0.2, 0.7 — Bootstrap del proyecto Next.js con TypeScript y Tailwind
+**Qué se hizo:**
 
-📚 CONTEXTO OBLIGATORIO A LEER:
-- docs/project_definition/06_tech_stack.md
-- docs/implementation_plan.md (Fase 0)
-- docs/agent_prompts/README.md (sección "Reglas inviolables")
+- Scaffold Next.js 14 + TypeScript + Tailwind + ESLint con App Router e import alias `@/*`.
+- Carpetas: `app/`, `components/ui/`, `lib/`, `lib/supabase/`, `db/migrations/`, `scrapers/`, `tests/` (cada placeholder con `.gitkeep`).
+- `CLAUDE.md` generado con descripción del codebase + las 3 leyes inviolables de marca.
+- `.gitignore` cubre `.env*.local`, `.next`, `.vercel`, `node_modules`, `.claude/`.
 
-🛠️ SKILLS / MCPs A USAR:
-- init (al final, para generar CLAUDE.md con el codebase recién armado)
+**Archivos clave creados:**
 
-📋 INSTRUCCIONES:
-1. Verificar que el repo no tenga ya un `package.json`. Si existe, parar y preguntar al usuario.
-2. Inicializar Next.js 15+ con App Router, TypeScript, Tailwind, ESLint, src/ directory NO (usar root), import alias `@/*`:
-   `npx create-next-app@latest . --typescript --tailwind --eslint --app --import-alias "@/*"`
-3. Crear la estructura de carpetas adicional:
-   - `components/ui/` (componentes de design system)
-   - `components/` (componentes feature-specific)
-   - `lib/` (utils, clients, helpers)
-   - `lib/supabase/` (clientes server + browser)
-   - `db/migrations/` (SQL versionado)
-   - `scrapers/` (módulos de scraping, vacío por ahora)
-   - `tests/` (tests E2E con Playwright más adelante)
-4. Agregar `.gitignore` entries para `.env.local`, `.vercel`, `.next`, `node_modules`.
-5. Limpiar `app/page.tsx` y dejar un placeholder con texto "FitList" centrado, fondo `bg-[#121212]`, texto blanco — para verificar que Tailwind funciona.
-6. Limpiar `app/globals.css`, dejar sólo los `@tailwind` directives + un `body { background: #121212; color: #fff; }` mínimo.
-7. Ejecutar `npm run dev` y verificar que arranque sin warnings.
-8. Al terminar, invocar la skill `init` para generar `CLAUDE.md` con el contexto del codebase.
+- `package.json`, `tsconfig.json`, `next.config.js`, `tailwind.config.js`, `postcss.config.js`
+- `app/layout.tsx`, `app/page.tsx`, `app/globals.css`
+- `CLAUDE.md`
 
-🙋 ACCIÓN HUMANA REQUERIDA: Ninguna en este prompt. Todo se hace localmente.
+**Diff vs spec original (notable):**
 
-✅ CRITERIOS DE ACEPTACIÓN:
-- `npm run dev` levanta en http://localhost:3000 sin warnings ni errores.
-- La página muestra "FitList" centrado sobre fondo charcoal.
-- Existen las carpetas `components/ui/`, `lib/supabase/`, `db/migrations/`, `scrapers/`, `tests/`.
-- `tsc --noEmit` no tira errores.
-- `CLAUDE.md` existe en el root con descripción del codebase.
-
-📁 ARCHIVOS A CREAR / MODIFICAR:
-- package.json, tsconfig.json, next.config.mjs, tailwind.config.ts, postcss.config.mjs
-- app/layout.tsx, app/page.tsx, app/globals.css
-- .gitignore
-- CLAUDE.md
-- (carpetas vacías con .gitkeep): components/ui, lib/supabase, db/migrations, scrapers, tests
-```
+- Tailwind config es `.js` (CommonJS), no `.ts` — package es `"type": "commonjs"`.
+- Next.js 14 (no 15+); decisión de stack-stability sobre la última disponible.
 
 ---
 
-## P0.B — Linting, formatting y env vars
+## P0.B — Linting, formatting, env vars [DONE]
 
-````prompt
-🎯 TAREA: 0.3, 0.5 — ESLint + Prettier + .editorconfig + manejo de env vars
+**Qué se hizo:**
 
-📚 CONTEXTO OBLIGATORIO A LEER:
-- docs/implementation_plan.md (Fase 0, tareas 0.3 y 0.5)
-- package.json del repo (ya existe post-P0.A)
+- Prettier configurado con `prettier-plugin-tailwindcss` (auto-orden de clases).
+- ESLint con `eslint-config-prettier` para evitar conflictos.
+- `.editorconfig` (LF, UTF-8, indent 2, trim trailing whitespace).
+- Scripts en `package.json`: `lint`, `format`, `format:check`, `typecheck`.
+- `.env.example` con placeholders comentados para Supabase, LLM, Firecrawl, etc.
 
-🛠️ SKILLS / MCPs A USAR:
-- (ninguna especial)
+**Archivos clave:**
 
-📋 INSTRUCCIONES:
-1. Configurar Prettier con un `.prettierrc.json` razonable:
-   - 2 espacios de indentación
-   - single quotes para JS/TS
-   - trailing commas all
-   - print width 100
-   - Plugin `prettier-plugin-tailwindcss` para auto-ordenar clases.
-2. Agregar `.prettierignore` con `node_modules`, `.next`, `dist`, `db/migrations`.
-3. Ajustar `.eslintrc.json` (o `eslint.config.mjs` según versión) para que no choque con Prettier (`eslint-config-prettier`).
-4. Crear `.editorconfig` con LF, UTF-8, indent 2, trim trailing whitespace.
-5. Agregar scripts a `package.json`:
-   - `"lint": "next lint"`
-   - `"format": "prettier --write ."`
-   - `"format:check": "prettier --check ."`
-   - `"typecheck": "tsc --noEmit"`
-6. Crear `.env.example` con placeholders comentados (sin valores reales) para:
-   ```
-   NEXT_PUBLIC_SUPABASE_URL=
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=
-   SUPABASE_SERVICE_ROLE_KEY=
-   LLM_API_KEY=
-   LLM_PROVIDER=anthropic|openai|gemini
-   FIRECRAWL_API_KEY=
-   ```
-7. Documentar cada variable en un comentario arriba.
-8. Verificar que `.env.local` esté en `.gitignore`.
-
-🙋 ACCIÓN HUMANA REQUERIDA: Ninguna todavía. Las claves reales se cargan en P0.C.
-
-✅ CRITERIOS DE ACEPTACIÓN:
-- `npm run lint` y `npm run format:check` corren limpios.
-- `.env.example` está comiteado, `.env.local` no.
-- Al guardar un archivo, las clases Tailwind se reordenan automáticamente (con la extensión Prettier del IDE).
-
-📁 ARCHIVOS A CREAR / MODIFICAR:
-- .prettierrc.json, .prettierignore, .editorconfig
-- eslint.config.mjs (o .eslintrc.json)
-- package.json (scripts)
-- .env.example
-````
+- `.prettierrc.json`, `.prettierignore`, `.editorconfig`
+- `.eslintrc.json`
+- `.env.example`
 
 ---
 
-## P0.C — Supabase cloud + Vercel deploy
+## P0.C — Supabase cloud + clientes SSR + Vercel [DONE]
 
-```prompt
-🎯 TAREA: 0.4, 0.6 — Conectar Supabase cloud + deploy automático en Vercel
+**Qué se hizo:**
 
-📚 CONTEXTO OBLIGATORIO A LEER:
-- docs/project_definition/06_tech_stack.md (sección Supabase + Vercel)
-- docs/implementation_plan.md (Fase 0)
+- Proyecto Supabase creado: `fitlist-dev` (ref `rjvzmpiwenneasbnlmto`, región `sa-east-1`).
+- Vercel conectado al repo, env vars cargadas (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`).
+- SDK instalado: `@supabase/supabase-js`, `@supabase/ssr`.
+- `lib/supabase/server.ts` y `lib/supabase/client.ts` siguiendo el patrón oficial de Supabase para Next.js App Router.
+- `app/api/health/route.ts` que pega a la DB y devuelve `{ ok: true }` — funcionando en local y en deploy de Vercel.
+- `db/migrations/000_init.sql` con la convención documentada (numerado secuencial, idempotente).
 
-🛠️ SKILLS / MCPs A USAR:
-- supabase/agent-skills (si está instalado, úsalo para inicializar el cliente correctamente)
+**Archivos clave:**
 
-📋 INSTRUCCIONES:
+- `lib/supabase/server.ts`, `lib/supabase/client.ts`
+- `app/api/health/route.ts`
+- `db/migrations/000_init.sql`
+- `.env.local` (no comiteado)
 
-PARTE 1 — Supabase
-1. PAUSAR Y PEDIR AL USUARIO que haga lo siguiente, paso a paso:
-   - Ir a https://supabase.com/dashboard, crear cuenta si no tiene.
-   - Crear un proyecto nuevo llamado "fitlist-dev".
-   - Elegir región más cercana (sudamérica si está disponible).
-   - Anotar la database password en un lugar seguro.
-   - Una vez creado, ir a Settings → API y copiar:
-     - `Project URL`
-     - `anon public key`
-     - `service_role key` (¡secreta! sólo server-side)
-   - Pegar las 3 cosas en el chat para continuar.
-2. Cuando el usuario pegue las claves, escribirlas en `.env.local` (no comitear).
-3. Instalar el SDK: `npm i @supabase/supabase-js @supabase/ssr`
-4. Crear `lib/supabase/server.ts` y `lib/supabase/client.ts` siguiendo el patrón oficial de Supabase para Next.js App Router (server components vs client components).
-5. Crear un endpoint de health check `app/api/health/route.ts` que haga una query trivial (ej: `select 1`) y devuelva JSON `{ ok: true }`.
-6. Verificar localmente que `curl http://localhost:3000/api/health` devuelva `{ ok: true }`.
-
-PARTE 2 — Vercel
-7. PAUSAR Y PEDIR AL USUARIO que haga lo siguiente:
-   - Ir a https://vercel.com, crear cuenta (puede usar GitHub OAuth).
-   - Conectar el repo de FitList desde GitHub (si el repo aún no está en GitHub, pedirle al usuario que lo cree primero y haga `git remote add` + `git push`).
-   - En Vercel, durante el import, agregar las env vars del paso anterior (NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY) en la sección "Environment Variables".
-   - Dejar que Vercel haga el primer deploy.
-   - Pegar la URL del deploy en el chat.
-8. Cuando el usuario pegue la URL, hacer `curl <url>/api/health` y verificar que devuelva `{ ok: true }`.
-
-PARTE 3 — Migración cero
-9. Crear `db/migrations/000_init.sql` con un comentario de placeholder explicando la convención (numerado secuencial, idempotente con `if not exists`, una migración por feature).
-
-🙋 ACCIÓN HUMANA REQUERIDA: SÍ — el usuario debe crear cuentas y pegar las claves. Pausar el flow y comunicarse claramente.
-
-✅ CRITERIOS DE ACEPTACIÓN:
-- `.env.local` tiene las 3 claves de Supabase y `npm run dev` funciona.
-- `/api/health` devuelve `{ ok: true }` localmente.
-- El deploy en Vercel es accesible y `/api/health` también responde OK ahí.
-- Push a la rama main dispara redeploy automático.
-
-📁 ARCHIVOS A CREAR / MODIFICAR:
-- .env.local (NO comitear)
-- lib/supabase/server.ts, lib/supabase/client.ts
-- app/api/health/route.ts
-- db/migrations/000_init.sql
-- package.json (deps)
-```
+**TODO pendiente (de la memoria del usuario):** rotar `service_role` key cuando la app deje el modo "puramente local + dev preview".
 
 ---
 
-## Cierre de fase
+## Cierre de Fase 0
 
-Al terminar P0.C, **antes de pasar a Fase 1**, ejecutar la skill `less-permission-prompts` para reducir interrupciones futuras de permisos. Luego pedir al usuario que confirme visualmente que el deploy en Vercel funciona.
+`npm run dev` levanta limpio, `/api/health` responde `{ ok: true }` localmente y en Vercel preview, push a `main` dispara redeploy automático. **Todos los criterios cumplidos.** Pasar a Fase 1.

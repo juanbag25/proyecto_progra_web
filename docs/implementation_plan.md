@@ -29,48 +29,49 @@ Descomponer la construcción de FitList en fases secuenciales con tareas granula
 
 ---
 
-## Fase 0 — Foundation & Tooling
+## Fase 0 — Foundation & Tooling ✅ DONE
 
 **Meta:** Repo arrancando con Next.js + Tailwind + Supabase + deploy automático en Vercel.
 
 ### Tareas
 
-- **0.1** Inicializar proyecto Next.js (App Router). Decidir TS vs JS (recomendado: TS por preferencia del usuario).
-- **0.2** Instalar y configurar Tailwind CSS + PostCSS.
-- **0.3** Configurar ESLint + Prettier + `.editorconfig`.
-- **0.4** Crear proyecto en Supabase cloud. Carpeta `db/migrations/` para SQL versionado.
-- **0.5** Manejo de env vars (`.env.local`, `.env.example`). Documentar variables.
-- **0.6** Conectar repo a Vercel. Habilitar preview deploys por PR.
-- **0.7** Estructura de carpetas base: `app/`, `components/`, `lib/`, `db/`, `scrapers/`, `tests/`.
+- **0.1** ✅ Inicializar proyecto Next.js 14 + TypeScript + App Router + import alias `@/*`. _(commit 14986c1)_
+- **0.2** ✅ Tailwind CSS + PostCSS configurados. _(commit 14986c1)_
+- **0.3** ✅ ESLint + Prettier + `.editorconfig` + `prettier-plugin-tailwindcss`. _(commit fc8977f)_
+- **0.4** ✅ Proyecto Supabase `fitlist-dev` creado (ref `rjvzmpiwenneasbnlmto`, `sa-east-1`). Carpeta `db/migrations/` con `000_init.sql`. _(commit 62c0a47)_
+- **0.5** ✅ `.env.example` documentado con placeholders comentados. _(commit fc8977f)_
+- **0.6** ✅ Repo conectado a Vercel; preview deploys automáticos por push.
+- **0.7** ✅ Estructura: `app/`, `components/`, `components/ui/`, `lib/`, `lib/supabase/`, `db/migrations/`, `scrapers/`, `tests/` (placeholders con `.gitkeep`). _(commit 14986c1)_
 
-**Aceptación:** `npm run dev` arranca; Tailwind aplica clases; cliente Supabase conecta; primer push genera preview en Vercel.
+**Aceptación:** ✅ `npm run dev` levanta limpio; Tailwind funciona; `/api/health` devuelve `{ ok: true }` en local y en Vercel; push a `main` redeploya.
 
-**Archivos:** `package.json`, `next.config.mjs`, `tailwind.config.ts`, `postcss.config.js`, `.env.example`, `lib/supabase.ts`, `app/layout.tsx`, `app/page.tsx`.
+**Archivos creados:** `package.json`, `next.config.js` (NO `.mjs`), `tailwind.config.js` (NO `.ts` — package es CommonJS), `postcss.config.js`, `tsconfig.json`, `.env.example`, `.eslintrc.json`, `.prettierrc.json`, `.editorconfig`, `lib/supabase/server.ts`, `lib/supabase/client.ts`, `app/layout.tsx`, `app/page.tsx`, `app/globals.css`, `app/api/health/route.ts`, `db/migrations/000_init.sql`, `CLAUDE.md`.
+
+**Pendiente menor:** rotar `service_role` key cuando la app deje el modo dev preview.
 
 ---
 
-## Fase 1 — Design System & Brand Layer
+## Fase 1 — Design System & Brand Layer 🟡 MOSTLY DONE
 
 **Meta:** Codificar la identidad (dark mode, glass, acentos) como theme Tailwind + componentes reutilizables.
 
+> **Nota:** el spec original asumía naming plano (charcoal/midnight/cyan.DEFAULT). El scaffold real usa **naming semántico** (`canvas.*`, `accent.*`, `warn.*`, `font-display` vs `font-sans`, `shadow-glow-{color}`, etc.) — está documentado como ley de marca en `CLAUDE.md` y es la fuente de verdad. Ver "Convenciones del codebase" en `agent_prompts/README.md` §4.1.
+
 ### Tareas
 
-- **1.1** Configurar `tailwind.config.ts` con paleta de marca (`charcoal #121212`, `midnight #0A0F1A`, `cyan #00F0FF`, `mint #00E676`, `coral #FF6B6B`, `coral-warm #FF8E53`) y fuentes Outfit/Inter.
-- **1.2** Estilos globales en `globals.css`: dark mode forzado, tabular nums, scroll suave, selección de texto custom.
-- **1.3** Componentes UI base (`components/ui/`):
-  - `GlassCard` (backdrop-blur 16px, semi-transparente, borde blanco al 5%)
-  - `PrimaryButton`, `SecondaryButton`, `GhostButton`
-  - `Input`, `Select`, `NumberInput`
-  - `RadialProgress` (color, valor, label configurables)
-  - `Modal` / `Sheet`
-  - `Toast`
-  - `SwipeableCard` (para onboarding)
-- **1.4** Utilidad de mesh gradient de fondo (animado, sutil).
-- **1.5** Página `/dev/components` con showcase de cada componente para QA visual.
+- **1.1** ✅ `tailwind.config.js` con paleta semántica (`canvas.{base,raised,elevated}`, `accent.{cyan,mint}`, `warn.{coral,orange}`, `hairline`, `glass`), gradients (`mesh-hero`, `accent-gradient`, `warn-gradient`), glow shadows por acento, `ease-premium`, animación `fade-up`, fuentes Outfit (`font-display`) e Inter (`font-sans`).
+- **1.2** 🟡 `globals.css` con dark mode forzado, `.glass`/`.glass-strong`/`.tabular`, selección de texto en cyan @ 25%, scrollbar custom, slider/select custom. **Falta:** `scroll-behavior: smooth` envuelto en `prefers-reduced-motion: no-preference`. → **P1.A.1**.
+- **1.3** 🟡 Componentes UI base (`components/ui/`):
+  - ✅ `GlassCard` (con variantes `glass` / `glass-strong`)
+  - ✅ `Button` (variants `primary`, `secondary`, `ghost`, sizes sm/md/lg)
+  - ✅ `Input`, `Select`, `Slider`, `RadialProgress`, `Typography`, `ColorSwatch`, `GroceryCard`
+  - ⏳ `NumberInput`, `Modal`, `Sheet`, `Toast`, `SwipeableCard` → **P1.B**
+- **1.4** ✅ Mesh gradient como token Tailwind: `bg-mesh-hero` (radial layers cyan + mint + coral).
+- **1.5** ✅ Showcase en `/design-system` (NO `/dev/components`). Hay que extenderlo cuando lleguen los 5 componentes nuevos.
 
 **Aceptación:** Showcase muestra cada componente; dark mode impecable; glassmorphism renderiza bien en Chrome/Safari/Firefox; fuentes cargan sin FOUT.
 
-**Archivos:** `tailwind.config.ts`, `app/globals.css`, `components/ui/*`, `app/dev/components/page.tsx`.
+**Archivos:** `tailwind.config.js`, `app/globals.css`, `components/ui/*`, `app/design-system/page.tsx`.
 
 ---
 
