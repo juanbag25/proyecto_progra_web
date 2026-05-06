@@ -17,7 +17,12 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
           </Link>
 
           <div className="flex items-center gap-4">
-            <span className="hidden font-sans text-xs text-white/55 sm:inline">{user.email}</span>
+            <Link
+              href="/app/profile"
+              className="hidden font-sans text-xs text-white/55 transition-colors duration-300 ease-premium hover:text-accent-cyan sm:inline"
+            >
+              {user.email}
+            </Link>
             <form action="/auth/signout" method="post">
               <Button type="submit" variant="ghost" size="sm">
                 Salir

@@ -1,12 +1,16 @@
 'use client';
 
-import { useState, useId, type CSSProperties } from 'react';
+import { useId, useState, type CSSProperties } from 'react';
 
 interface SliderProps {
   label?: string;
   min?: number;
   max?: number;
   step?: number;
+  /** Controlled value. If provided, `onChange` should be too. */
+  value?: number;
+  onChange?: (value: number) => void;
+  /** Initial value when used uncontrolled. Ignored if `value` is provided. */
   defaultValue?: number;
   unit?: string;
   formatValue?: (n: number) => string;
@@ -17,18 +21,28 @@ export function Slider({
   min = 0,
   max = 100,
   step = 1,
+  value,
+  onChange,
   defaultValue,
   unit,
   formatValue,
 }: SliderProps) {
-  const initial = defaultValue ?? Math.round((min + max) / 2);
-  const [value, setValue] = useState<number>(initial);
   const id = useId();
+  // Uncontrolled fallback: keeps the design-system showcase usage working
+  // without an external state container.
+  const [internal, setInternal] = useState<number>(defaultValue ?? Math.round((min + max) / 2));
+  const isControlled = value !== undefined;
+  const current = isControlled ? value : internal;
 
-  const pct = ((value - min) / (max - min)) * 100;
+  const handleChange = (next: number) => {
+    if (!isControlled) setInternal(next);
+    onChange?.(next);
+  };
+
+  const pct = ((current - min) / (max - min)) * 100;
   const display = formatValue
-    ? formatValue(value)
-    : `${value.toLocaleString('en-US')}${unit ? ` ${unit}` : ''}`;
+    ? formatValue(current)
+    : `${current.toLocaleString('en-US')}${unit ? ` ${unit}` : ''}`;
 
   const trackStyle: CSSProperties & Record<'--track-bg', string> = {
     '--track-bg': `linear-gradient(to right, #00F0FF 0%, #00E676 ${pct}%, rgba(255,255,255,0.08) ${pct}%, rgba(255,255,255,0.08) 100%)`,
@@ -55,8 +69,8 @@ export function Slider({
         min={min}
         max={max}
         step={step}
-        value={value}
-        onChange={(e) => setValue(Number(e.target.value))}
+        value={current}
+        onChange={(e) => handleChange(Number(e.target.value))}
         className="fitlist-slider"
         style={trackStyle}
         aria-label={label}
