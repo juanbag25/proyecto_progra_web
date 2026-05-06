@@ -15,6 +15,12 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
   ::selection {
     background-color: rgba(0, 240, 255, 0.25);
     color: #ffffff;
@@ -126,6 +132,16 @@
   -moz-appearance: none;
   appearance: none;
   background-image: none;
+}
+
+/* Toast progress bar — shrinks left-to-right over the toast's duration */
+@keyframes toast-progress {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
 }
 
 /* Scrollbar — slim and dark */
