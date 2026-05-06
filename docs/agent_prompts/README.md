@@ -135,20 +135,20 @@ Cada prompt incluye estas reglas como recordatorio, pero las dejo acá centraliz
 
 ### Paleta de colores (tokens Tailwind)
 
-| Concepto                  | Token Tailwind                                          | Hex          |
-| ------------------------- | ------------------------------------------------------- | ------------ |
-| Fondo principal           | `bg-canvas-base` / `text-canvas-base`                   | `#0A0F1A`    |
-| Fondo elevado primer paso | `bg-canvas-raised`                                      | `#121212`    |
-| Superficie elevada        | `bg-canvas-elevated`                                    | `#1E1E24`    |
-| Acento principal          | `bg-accent-cyan` / `text-accent-cyan` / `border-accent-cyan` | `#00F0FF`  |
-| Acento secundario         | `bg-accent-mint` / `text-accent-mint`                   | `#00E676`    |
-| Warning / energy CTA      | `bg-warn-coral` / `text-warn-coral`                     | `#FF6B6B`    |
-| Warning warm              | `bg-warn-orange`                                        | `#FF8E53`    |
-| Borde sutil               | `border-hairline`                                       | white @ 5%   |
-| Glass tint                | `bg-glass`                                              | white @ 4%   |
-| Gradient cyan→mint        | `bg-accent-gradient`                                    | linear       |
-| Gradient orange→coral     | `bg-warn-gradient`                                      | linear       |
-| Mesh para hero            | `bg-mesh-hero`                                          | radial layers|
+| Concepto                  | Token Tailwind                                               | Hex           |
+| ------------------------- | ------------------------------------------------------------ | ------------- |
+| Fondo principal           | `bg-canvas-base` / `text-canvas-base`                        | `#0A0F1A`     |
+| Fondo elevado primer paso | `bg-canvas-raised`                                           | `#121212`     |
+| Superficie elevada        | `bg-canvas-elevated`                                         | `#1E1E24`     |
+| Acento principal          | `bg-accent-cyan` / `text-accent-cyan` / `border-accent-cyan` | `#00F0FF`     |
+| Acento secundario         | `bg-accent-mint` / `text-accent-mint`                        | `#00E676`     |
+| Warning / energy CTA      | `bg-warn-coral` / `text-warn-coral`                          | `#FF6B6B`     |
+| Warning warm              | `bg-warn-orange`                                             | `#FF8E53`     |
+| Borde sutil               | `border-hairline`                                            | white @ 5%    |
+| Glass tint                | `bg-glass`                                                   | white @ 4%    |
+| Gradient cyan→mint        | `bg-accent-gradient`                                         | linear        |
+| Gradient orange→coral     | `bg-warn-gradient`                                           | linear        |
+| Mesh para hero            | `bg-mesh-hero`                                               | radial layers |
 
 ### Sombras de glow (cada acento tiene su sombra)
 
@@ -185,14 +185,14 @@ Ver `components/ui/Button.tsx` y `GlassCard.tsx`. Patrón inviolable:
 
 ### Rutas convencionales
 
-| Ruta              | Propósito                                          |
-| ----------------- | -------------------------------------------------- |
-| `/`               | Landing pública                                    |
-| `/design-system`  | Showcase de componentes UI (NO `/dev/components`)  |
-| `/api/health`     | Health check del cliente Supabase                  |
-| `/app/*`          | App protegida (requiere sesión)                    |
-| `/onboarding/*`   | Flow de captura de perfil (requiere sesión)        |
-| `/(auth)/*`       | Sign up, login, password reset (públicas)          |
+| Ruta             | Propósito                                         |
+| ---------------- | ------------------------------------------------- |
+| `/`              | Landing pública                                   |
+| `/design-system` | Showcase de componentes UI (NO `/dev/components`) |
+| `/api/health`    | Health check del cliente Supabase                 |
+| `/app/*`         | App protegida (requiere sesión)                   |
+| `/onboarding/*`  | Flow de captura de perfil (requiere sesión)       |
+| `/(auth)/*`      | Sign up, login, password reset (públicas)         |
 
 ### Stack instalado a la fecha
 
@@ -209,18 +209,18 @@ Próx. agente: chequear `package.json` antes de proponer instalar nada. A esta a
 
 ## 5. Índice de fases
 
-| Archivo                                              | Fase                   | Estado / Prompts activos |
-| ---------------------------------------------------- | ---------------------- | ------------------------ |
+| Archivo                                              | Fase                   | Estado / Prompts activos                                   |
+| ---------------------------------------------------- | ---------------------- | ---------------------------------------------------------- |
 | [`00_foundation.md`](./00_foundation.md)             | Foundation & Tooling   | ✅ DONE (3 sub-fases en commits 14986c1, fc8977f, 62c0a47) |
 | [`01_design_system.md`](./01_design_system.md)       | Design System & Brand  | 🟡 P1.A.1 (cierre de gap) + P1.B (5 componentes faltantes) |
-| [`02_authentication.md`](./02_authentication.md)     | Authentication         | 1 prompt                 |
-| [`03_onboarding.md`](./03_onboarding.md)             | Onboarding (Interview) | 2 prompts                |
-| [`04_nutrition_engine.md`](./04_nutrition_engine.md) | AI Nutrition Engine    | 2 prompts                |
-| [`05_scraping.md`](./05_scraping.md)                 | Web Scraping Layer     | 3 prompts                |
-| [`06_optimization.md`](./06_optimization.md)         | Optimization Algorithm | 2 prompts                |
-| [`07_shopping_list.md`](./07_shopping_list.md)       | Shopping List UI       | 3 prompts                |
-| [`08_feedback_loop.md`](./08_feedback_loop.md)       | Weekly Feedback Loop   | 1 prompt                 |
-| [`09_polish_launch.md`](./09_polish_launch.md)       | Polish, Tests & Launch | 3 prompts                |
+| [`02_authentication.md`](./02_authentication.md)     | Authentication         | 1 prompt                                                   |
+| [`03_onboarding.md`](./03_onboarding.md)             | Onboarding (Interview) | 2 prompts                                                  |
+| [`04_nutrition_engine.md`](./04_nutrition_engine.md) | AI Nutrition Engine    | 2 prompts                                                  |
+| [`05_scraping.md`](./05_scraping.md)                 | Web Scraping Layer     | 3 prompts                                                  |
+| [`06_optimization.md`](./06_optimization.md)         | Optimization Algorithm | 2 prompts                                                  |
+| [`07_shopping_list.md`](./07_shopping_list.md)       | Shopping List UI       | 3 prompts                                                  |
+| [`08_feedback_loop.md`](./08_feedback_loop.md)       | Weekly Feedback Loop   | 1 prompt                                                   |
+| [`09_polish_launch.md`](./09_polish_launch.md)       | Polish, Tests & Launch | 3 prompts                                                  |
 
 **Próximo prompt a ejecutar:** `01_design_system.md` → P1.A.1.
 

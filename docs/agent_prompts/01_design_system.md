@@ -2,11 +2,11 @@
 
 **Estado: 🟡 MOSTLY DONE.** El theme Tailwind, los estilos globales, las fuentes y la mayor parte de la biblioteca de componentes ya están en el repo (heredados del scaffold + commits P0.A–C). Lo que queda es un cierre quirúrgico de gaps + algunos componentes que faltan.
 
-| Sub-fase | Estado | Resumen                                                                          |
-| -------- | ------ | -------------------------------------------------------------------------------- |
-| P1.A     | ✅ DONE (con 1 micro-gap) | Theme Tailwind con naming semántico + globals.css + fuentes Outfit/Inter |
-| P1.A.1   | ⏳ PROMPT NUEVO | Cierre de gap: `scroll-behavior: smooth` + QA visual de `/design-system`         |
-| P1.B     | 🟡 PARCIAL | 9 de los 14 componentes ya existen. Faltan: `Modal`, `Sheet`, `Toast`, `SwipeableCard`, `NumberInput` |
+| Sub-fase | Estado                    | Resumen                                                                                               |
+| -------- | ------------------------- | ----------------------------------------------------------------------------------------------------- |
+| P1.A     | ✅ DONE (con 1 micro-gap) | Theme Tailwind con naming semántico + globals.css + fuentes Outfit/Inter                              |
+| P1.A.1   | ⏳ PROMPT NUEVO           | Cierre de gap: `scroll-behavior: smooth` + QA visual de `/design-system`                              |
+| P1.B     | 🟡 PARCIAL                | 9 de los 14 componentes ya existen. Faltan: `Modal`, `Sheet`, `Toast`, `SwipeableCard`, `NumberInput` |
 
 > **Importante para futuros agentes:** el naming de tokens y las convenciones del codebase difieren del spec literal que escribí originalmente. La fuente de verdad es `CLAUDE.md` + `tailwind.config.js`. Ver también la sección "Convenciones del codebase" en [`README.md`](./README.md).
 
@@ -84,7 +84,7 @@
 
 ## P1.B — Componentes UI faltantes + extensión del showcase
 
-````prompt
+```prompt
 🎯 TAREA: 1.3 (parcial) — Agregar los 5 componentes UI que faltan + sumarlos al showcase de `/design-system`.
 
 📚 CONTEXTO OBLIGATORIO A LEER:
@@ -181,7 +181,7 @@ PARTE 5 — Cierre
 - components/ui/SwipeableCard.tsx (nuevo)
 - app/design-system/page.tsx (extender, NO reescribir)
 - package.json (solo si el usuario aprueba alguna dep nueva)
-````
+```
 
 ---
 

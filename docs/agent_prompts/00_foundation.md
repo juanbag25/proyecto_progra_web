@@ -2,11 +2,11 @@
 
 **Estado: ✅ DONE.** Las 3 sub-tareas (P0.A, P0.B, P0.C) ya fueron implementadas. Esta página queda como referencia histórica del trabajo hecho y como spec retro-aplicado por si hay que reproducir o auditar.
 
-| Sub-fase | Commit                                                                 | Resumen                                                                       |
-| -------- | ---------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| P0.A     | `14986c1` — _P0.A: scaffold placeholder dirs and CLAUDE.md_            | Estructura de carpetas + `.gitkeep` + `CLAUDE.md` con la "ley de marca"       |
-| P0.B     | `fc8977f` — _P0.B: Prettier + ESLint + .editorconfig + env scaffold_   | Toolchain de formato/lint + `.env.example` con todas las variables previstas  |
-| P0.C     | `62c0a47` — _P0.C: Supabase SSR clients + /api/health + migration baseline_ | Clientes Supabase server/browser, health check, primer SQL                |
+| Sub-fase | Commit                                                                      | Resumen                                                                      |
+| -------- | --------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| P0.A     | `14986c1` — _P0.A: scaffold placeholder dirs and CLAUDE.md_                 | Estructura de carpetas + `.gitkeep` + `CLAUDE.md` con la "ley de marca"      |
+| P0.B     | `fc8977f` — _P0.B: Prettier + ESLint + .editorconfig + env scaffold_        | Toolchain de formato/lint + `.env.example` con todas las variables previstas |
+| P0.C     | `62c0a47` — _P0.C: Supabase SSR clients + /api/health + migration baseline_ | Clientes Supabase server/browser, health check, primer SQL                   |
 
 > **Importante:** El scaffold real difiere en algunos detalles del spec literal que escribí originalmente. Por ejemplo: `tailwind.config.js` (no `.ts`), naming semántico de tokens (`canvas.*`, `accent.*`, `warn.*` en vez de planos), separación `font-display` vs `font-sans`. Esa divergencia es **intencional y mejor que mi spec** — está cementada en `CLAUDE.md` como ley de marca. Si retomás esta fase, seguí lo que dice `CLAUDE.md`, no lo que dicen los prompts originales más abajo.
 
