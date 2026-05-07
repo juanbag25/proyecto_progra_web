@@ -1190,6 +1190,167 @@
         margin-top: 1px;
       }
 
+      /* ========== SLIDE 6 — PROMPTS ========== */
+      .prompts-grid {
+        flex: 1;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 12px;
+        margin-top: 6px;
+        min-height: 0;
+      }
+
+      .prompt-card {
+        background: rgba(255, 255, 255, 0.025);
+        border: 1px solid var(--hairline);
+        border-radius: 14px;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        min-height: 0;
+      }
+
+      .prompt-card.cy {
+        border-color: rgba(0, 240, 255, 0.28);
+      }
+
+      .prompt-card.mt {
+        border-color: rgba(0, 230, 118, 0.28);
+      }
+
+      .prompt-card.warm {
+        border-color: rgba(255, 107, 107, 0.3);
+      }
+
+      .prompt-card .head {
+        padding: 12px 16px 10px;
+        border-bottom: 1px solid var(--hairline);
+      }
+
+      .prompt-card .head .num {
+        font-family: 'Outfit', sans-serif;
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--cyan);
+        margin-bottom: 3px;
+      }
+
+      .prompt-card.mt .head .num {
+        color: var(--mint);
+      }
+
+      .prompt-card.warm .head .num {
+        color: var(--coral);
+      }
+
+      .prompt-card .head .title {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 700;
+        font-size: 14px;
+        letter-spacing: -0.01em;
+        color: var(--text);
+        line-height: 1.2;
+      }
+
+      .prompt-card .body {
+        flex: 1;
+        padding: 10px 14px;
+        overflow-y: auto;
+        min-height: 0;
+      }
+
+      .prompt-card .body pre {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 9px;
+        line-height: 1.55;
+        color: var(--text-muted);
+        white-space: pre-wrap;
+        word-break: break-word;
+        margin: 0;
+      }
+
+      .prompt-card .body .summary {
+        font-family: 'Inter', sans-serif;
+        font-size: 11.5px;
+        color: var(--text-muted);
+        line-height: 1.55;
+        font-style: italic;
+        margin: 0;
+      }
+
+      .prompt-card .body .summary strong {
+        color: var(--text);
+        font-style: normal;
+      }
+
+      .prompt-card .returns {
+        padding: 10px 14px;
+        border-top: 1px dashed var(--hairline);
+        background: rgba(0, 0, 0, 0.18);
+      }
+
+      .prompt-card .returns .label {
+        font-family: 'Outfit', sans-serif;
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: 0.22em;
+        color: var(--text-faint);
+        text-transform: uppercase;
+        margin-bottom: 6px;
+      }
+
+      .prompt-card .returns ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+      }
+
+      .prompt-card .returns li {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10px;
+        color: var(--cyan);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .prompt-card.mt .returns li {
+        color: var(--mint);
+      }
+
+      .prompt-card.warm .returns li {
+        color: var(--coral);
+      }
+
+      .prompt-card .returns li::before {
+        content: '↳';
+        color: var(--text-faint);
+        font-size: 11px;
+        opacity: 0.7;
+      }
+
+      .prompt-card .body::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .prompt-card .body::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      .prompt-card .body::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 3px;
+      }
+
+      .prompt-card .body::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
       @media (max-width: 900px) {
         .stage {
           width: 96vw;
@@ -1468,197 +1629,213 @@
           </div>
         </section>
 
-        <!-- ============ SLIDE 4 — REACT ============ -->
+        <!-- ============ SLIDE 4 — REACT + NEXT.JS (merged) ============ -->
         <section class="slide" data-slide="4">
           <div class="meta">
-            <span>Momento 3 · React</span>
+            <span>Momento 3 · React + Next.js</span>
             <span>04 / 06</span>
           </div>
 
-          <h1>React: <span class="accent">componentes que reaccionan</span></h1>
+          <h1>React + <span class="accent">Next.js</span></h1>
           <p class="lead">
-            Toda la UI es una función que recibe datos y devuelve JSX. Cuando los datos cambian, la
-            función se vuelve a ejecutar y React actualiza la pantalla.
+            React arma los <strong>componentes</strong> que reaccionan a los datos. Next.js los
+            conecta en una app web completa: rutas por carpetas, servidor, API endpoints, deploy.
           </p>
 
           <div class="body cols-2">
+            <!-- Componentes + Props -->
             <div class="card">
-              <span class="label">Componentes + props</span>
+              <span class="label">React · componentes + props</span>
               <h3>Funciones que reciben datos</h3>
               <ul>
                 <li><strong>Componente:</strong> función que retorna JSX (HTML escrito en JS)</li>
                 <li><strong>Props:</strong> datos que el padre le pasa al hijo — solo lectura</li>
                 <li>Ej: <code>&lt;ItemCard item={...} onToggle={...} /&gt;</code></li>
-                <li>Composición: páginas grandes hechas de componentes chicos reutilizables</li>
+                <li>Páginas grandes hechas de componentes chicos reutilizables</li>
               </ul>
             </div>
 
+            <!-- State + re-render -->
             <div class="card">
-              <span class="label mint">State + re-render</span>
-              <h3><code>useState</code> · datos que cambian</h3>
+              <span class="label mint">React · state + re-render</span>
+              <h3><code>useState</code> · cambia → re-render</h3>
               <ul>
-                <li class="mint"><strong>State:</strong> datos internos del componente que SÍ cambian</li>
-                <li class="mint">Cuando llamo <code>setX(...)</code>, React re-ejecuta el componente</li>
-                <li class="mint">Ej en <code>ListView</code>: el set de ítems tildados es state</li>
-                <li class="mint">El <code>SummaryHeader</code> recalcula los rings en cada toggle</li>
+                <li class="mint"><strong>State:</strong> datos del componente que SÍ cambian</li>
+                <li class="mint">Llamar <code>setX(...)</code> re-ejecuta el componente</li>
+                <li class="mint">Re-render si cambia el <strong>state</strong> o las <strong>props</strong></li>
+                <li class="mint">Ej en <code>ListView</code>: los ítems tildados son state → los anillos del dashboard se actualizan en cada toggle</li>
               </ul>
             </div>
 
+            <!-- useEffect -->
             <div class="card">
-              <span class="label warm">useEffect</span>
+              <span class="label warm">React · useEffect</span>
               <h3>Efectos secundarios</h3>
               <ul>
                 <li class="warm">Corre <em>después</em> del render — para tareas que no son JSX</li>
-                <li class="warm">Casos típicos: pedir datos, suscripciones, timers, listeners</li>
-                <li class="warm">Tiene array de dependencias: <code>[items, weekStart]</code></li>
+                <li class="warm">Casos típicos: pedir datos, suscripciones, timers</li>
+                <li class="warm">Array de dependencias: <code>[items, weekStart]</code></li>
                 <li class="warm">Si el array no cambia, el efecto no vuelve a correr</li>
               </ul>
             </div>
 
+            <!-- Next.js — App Router + Server/Client -->
             <div class="card">
-              <span class="label">¿Cuándo re-renderiza?</span>
-              <h3>Regla mental simple</h3>
+              <span class="label">Next.js · App Router + cliente/servidor</span>
+              <h3>Carpetas = rutas · dónde corre cada cosa</h3>
               <ul>
-                <li>Cambia el <strong>state</strong> del componente → re-render</li>
-                <li>Cambian las <strong>props</strong> que recibe → re-render</li>
-                <li>Re-renderiza el padre → re-renderizan sus hijos (por defecto)</li>
-                <li>React calcula la diferencia y actualiza solo lo necesario en el DOM</li>
+                <li><code>app/login/page.tsx</code> → <code>/login</code></li>
+                <li><code>app/api/feedback/route.ts</code> → <code>POST /api/feedback</code></li>
+                <li><strong>Server Component</strong> (default): trae datos de Supabase directo, render en servidor</li>
+                <li><strong>Client Component</strong> (<code>'use client'</code>): <code>useState</code>, eventos, <code>fetch('/api/*')</code> — corre en el navegador</li>
+                <li>Las API keys <strong>nunca</strong> llegan al bundle del navegador</li>
               </ul>
             </div>
           </div>
         </section>
 
-        <!-- ============ SLIDE 5 — NEXT.JS + CI/CD ============ -->
+        <!-- ============ SLIDE 5 — SCRAPER + GREEDY ============ -->
         <section class="slide" data-slide="5">
           <div class="meta">
-            <span>Momento 3 · Next.js · Momento 1 · CI/CD</span>
+            <span>Momento 1 · Lógica del producto</span>
             <span>05 / 06</span>
           </div>
 
-          <h1>Next.js + <span class="accent">deploy a Vercel</span></h1>
+          <h1>Detrás de escena: <span class="accent">scraper + greedy</span></h1>
           <p class="lead">
-            Next.js organiza la app por carpetas y separa lo que corre en el servidor de lo que
-            corre en el navegador. Vercel toma el código de GitHub y lo publica solo.
-          </p>
-
-          <div class="feature-row">
-            <div class="card">
-              <span class="label">App Router</span>
-              <h3>Carpetas = rutas</h3>
-              <ul>
-                <li><code>app/login/page.tsx</code> → <code>/login</code></li>
-                <li><code>app/app/list/page.tsx</code> → <code>/app/list</code></li>
-                <li><code>app/api/feedback/route.ts</code> → <code>POST /api/feedback</code></li>
-                <li>Layouts compartidos por sub-árbol (<code>layout.tsx</code>)</li>
-              </ul>
-            </div>
-
-            <div class="card">
-              <span class="label mint">Cliente vs servidor</span>
-              <h3>Dónde corre cada cosa</h3>
-              <ul>
-                <li class="mint"><strong>Server Component (default):</strong> traen datos de Supabase, render en servidor, llegan como HTML al navegador</li>
-                <li class="mint"><strong>Client Component (<code>'use client'</code>):</strong> usan <code>useState</code>, eventos, ejecutan JS en el navegador</li>
-                <li class="mint">Las API keys se quedan en server — nunca llegan al bundle del navegador</li>
-              </ul>
-            </div>
-          </div>
-
-          <h2 style="margin-top: 18px; color: var(--coral);">Pipeline CI/CD</h2>
-          <div class="pipeline">
-            <div class="pipe-step">
-              <div class="icon">⌨</div>
-              <div class="name">Editor</div>
-              <div class="sub">VS Code · TS</div>
-            </div>
-            <div class="pipe-step">
-              <div class="icon">⤴</div>
-              <div class="name">git push</div>
-              <div class="sub">main / feature</div>
-            </div>
-            <div class="pipe-step">
-              <div class="icon">◷</div>
-              <div class="name">GitHub</div>
-              <div class="sub">repo · PR review</div>
-            </div>
-            <div class="pipe-step">
-              <div class="icon">▲</div>
-              <div class="name">Vercel build</div>
-              <div class="sub">install · lint · build</div>
-            </div>
-            <div class="pipe-step">
-              <div class="icon">✦</div>
-              <div class="name">URL pública</div>
-              <div class="sub">fitlist.app · HTTPS</div>
-            </div>
-          </div>
-
-          <div class="footer-note">
-            Cada <code>push</code> a <code>main</code> dispara un build automático. Si compila + lint
-            ok → reemplaza producción. Si rompe → el deploy anterior queda online y se puede
-            <strong>rollback</strong> con un click. Variables de entorno (claves de Supabase, IA) se
-            cargan en el panel de Vercel — nunca en el repo.
-          </div>
-        </section>
-
-        <!-- ============ SLIDE 6 — IA ============ -->
-        <section class="slide" data-slide="6">
-          <div class="meta">
-            <span>Momento 4 · Uso fundamentado de IA</span>
-            <span>06 / 06</span>
-          </div>
-
-          <h1>IA como <span class="accent">copiloto</span>, no como autor</h1>
-          <p class="lead">
-            Yo diseñé el producto, partí el trabajo en fases y validé cada cambio. La IA escribió
-            código a partir de prompts dirigidos — pero la arquitectura, las decisiones y la prueba
-            son mías.
+            Dos motores server-side hacen el trabajo pesado: el <strong>scraper</strong> trae los
+            precios reales de los supermercados cada noche; el <strong>optimizer</strong> elige qué
+            productos meter en tu lista para cumplir tus targets dentro del presupuesto.
           </p>
 
           <div class="body cols-2">
+            <!-- Scraper card -->
             <div class="card">
-              <span class="label">Herramienta + estrategia</span>
-              <h3>Claude Code (Anthropic)</h3>
+              <span class="label">Web scraper · cron diario</span>
+              <h3>Trae los precios reales del super</h3>
               <ul>
-                <li>Elegida por su capacidad de leer el repo entero y razonar con contexto largo</li>
-                <li>Trabajo dividido en <strong>10 fases (P0–P9)</strong>, cada una con un prompt propio</li>
-                <li>Una fase por vez: criterios de aceptación claros antes de avanzar</li>
-                <li>Stack lockeado en <code>CLAUDE.md</code> — la IA no introduce dependencias por su cuenta</li>
+                <li>Corre a las <strong>4 AM UTC</strong> todos los días via Vercel Cron (<code>/api/scrape</code>)</li>
+                <li>3 cadenas argentinas: <strong>Carrefour, Jumbo, Dia</strong> — todas sobre VTEX, así que comparten una capa común</li>
+                <li>Coto quedó afuera (Oracle ATG, sin API pública, hostile UA filter)</li>
+                <li>Guarda los productos en <code>products</code> + JOIN a <code>foods</code> canónicos (la nutrición ya viene normalizada por 100 g)</li>
+                <li><code>scrape_logs</code> registra cada corrida — OK / errores / duración — para monitoreo desde <code>/dev</code></li>
               </ul>
             </div>
 
+            <!-- Greedy card -->
             <div class="card">
-              <span class="label mint">Cómo validé</span>
-              <h3>Cada cambio se prueba</h3>
+              <span class="label warm">Optimizer · greedy + scoring</span>
+              <h3>Elige qué entra en la lista</h3>
               <ul>
-                <li class="mint"><code>npm run lint</code> + <code>npx tsc --noEmit</code> en cada paso</li>
-                <li class="mint">Probar el flujo en el navegador (<code>npm run dev</code>) — no solo "compila"</li>
-                <li class="mint">Vitest para lógica crítica (optimizador, parsers)</li>
-                <li class="mint">Lectura crítica del diff: si no entiendo una línea, la cuestiono</li>
+                <li class="warm">Inputs: <strong>targets nutricionales</strong> + <strong>presupuesto</strong> + <strong>catálogo</strong> de productos</li>
+                <li class="warm">Variable de decisión: <code>qty[i]</code> en gramos por producto candidato</li>
+                <li class="warm"><strong>Score multi-objetivo:</strong> distancia a macros (proteína 3×) + cobertura de micros + costo + variedad</li>
+                <li class="warm">Loop greedy: en cada paso elige el candidato que <em>más mejora</em> el score, le suma gramos, repite</li>
+                <li class="warm">¿Por qué greedy y no programación lineal? Cero deps nuevas, predecible, debuggeable, y banca scoring no-lineal trivial</li>
+                <li class="warm">Tiempo total: <strong>&lt;200 ms</strong> para ~1000 candidatos</li>
               </ul>
+            </div>
+          </div>
+
+          <div class="footer-note" style="margin-top: 10px;">
+            <strong>Por qué greedy ≠ óptimo, y está bien:</strong> el problema real tiene
+            incertidumbre (los precios cambian, los gustos también) — gastar 10 s buscando la solución
+            matemáticamente óptima no paga. Una solución <em>muy buena</em> en 200 ms gana.
+          </div>
+        </section>
+
+        <!-- ============ SLIDE 6 — PROMPTS ============ -->
+        <section class="slide" data-slide="6">
+          <div class="meta">
+            <span>Momento 4 · Documentación de prompts</span>
+            <span>06 / 06</span>
+          </div>
+
+          <h1>Los 3 prompts que <span class="accent">armaron</span> FitList</h1>
+          <p class="lead">
+            Cada fase del producto arrancó con un prompt dirigido a un agente especializado. Acá los
+            tres prompts iniciales que definieron <strong>qué</strong>, <strong>cómo se siente</strong>
+            y <strong>cómo se ve</strong> la app.
+          </p>
+
+          <div class="prompts-grid">
+            <!-- Prompt 1 — Definición del producto -->
+            <div class="prompt-card cy">
+              <div class="head">
+                <div class="num">Prompt 01 · Producto</div>
+                <div class="title">Definición de funcionalidad y workflow</div>
+              </div>
+              <div class="body">
+<pre>You are going to be my main agent to develop the idea of my app, your reason to be is not to edit code but just simply help me write all the information necessary to define my idea and that is is structured in such a way that other agents can build from it. You will create a folder for all the information of the project. We will start by defining the functionality, functions and workflow of my app, in a future prompt we will focus on awsthetic and branding, remember now you dont have to think how to execute or build thos functions, just define them. I will tell you the idea with as much detail as possible. Here we go: My idea is to build an app that helps you build an eating routine with AI based on your body necessities, excerise levels, life style, prefeard foods, food restrictions, and your fittness goals (gain muscle, lose fat, gain strenght, etc) with your data it will build a diet according to it, it will first define your macros and micros so your diet is perfectly healthy (axpert IA agent loaded with sciense papers and relevant data) and then it will ask you for your budget. Then, given your location, it will search and scrap the web for products in online stores from your region, (for exaple if you are from Argentina it will search in online stores from carrefour, coto, jumbo, dia, and others) And given the prices and nutritional information from each product it will help you build a shopping list (literally just a piece of text, like a list) with all the products and their price, adding up to your budget limitation. This way if you eat the food you buy across the week that our app recommends, you will be reaching your nutritional goals more easilly, so you dont have to track what you eat each day, this way you already know the total ammount of food and the nutrients and calories you are eating across the week.</pre>
+              </div>
+              <div class="returns">
+                <div class="label">Devuelve</div>
+                <ul>
+                  <li>01_app_overview.md</li>
+                  <li>02_core_functionality.md</li>
+                  <li>03_user_workflow.md</li>
+                </ul>
+              </div>
             </div>
 
-            <div class="card">
-              <span class="label warm">Errores reales detectados</span>
-              <h3>Limitaciones que tuve que corregir</h3>
-              <ul>
-                <li class="warm">Edge cases de fechas (semanas que arrancan domingo) mal manejados</li>
-                <li class="warm">Tipos de TS demasiado laxos (<code>any</code>) — los reforcé con Zod</li>
-                <li class="warm">Lógica de matching producto → comida que dejaba pasar falsos positivos</li>
-                <li class="warm">Una redirect inicial apuntaba a <code>/design-system</code> en vez de <code>/login</code></li>
-              </ul>
+            <!-- Prompt 2 — Branding + estética -->
+            <div class="prompt-card mt">
+              <div class="head">
+                <div class="num">Prompt 02 · Identidad</div>
+                <div class="title">Branding + estética visual</div>
+              </div>
+              <div class="body">
+                <p class="summary">
+                  Sobre la base del producto ya definido, le pedí al agente que proponga
+                  <strong>nombres</strong> (FitList, NutriCart…), una <strong>misión, visión y
+                  valores</strong>, y un <strong>tono de voz</strong> de "experto que también es
+                  amigo".
+                </p>
+                <p class="summary" style="margin-top: 8px;">
+                  Y separadamente, una <strong>dirección visual premium</strong>: dark mode profundo,
+                  acentos en cyan eléctrico y mint vibrante, tipografías Outfit/Inter, glassmorphism
+                  para cards, e inspiración tipo <strong>Nike Run Club</strong> y
+                  <strong>Apple Fitness</strong> — sin look genérico de "app médica".
+                </p>
+              </div>
+              <div class="returns">
+                <div class="label">Devuelve</div>
+                <ul>
+                  <li>04_brand_identity.md</li>
+                  <li>05_aesthetics.md</li>
+                </ul>
+              </div>
             </div>
 
-            <div class="card">
-              <span class="label">Documentación de prompts</span>
-              <h3>Trazabilidad del trabajo con IA</h3>
-              <ul>
-                <li>10 prompts versionados en <code>docs/agent_prompts/00_…09_*.md</code></li>
-                <li>Cada uno con: objetivo, archivos a tocar, criterios de aceptación</li>
-                <li>Plan general en <code>docs/implementation_plan.md</code></li>
-                <li>Reglas globales (estética, stack, RLS) en <code>CLAUDE.md</code></li>
-              </ul>
+            <!-- Prompt 3 — Design system -->
+            <div class="prompt-card warm">
+              <div class="head">
+                <div class="num">Prompt 03 · Design system</div>
+                <div class="title">Setup técnico — Tailwind + UI kit</div>
+              </div>
+              <div class="body">
+<pre>Role &amp; Context: You are an expert UX/UI Designer and Senior Front-End Developer. Your mission is to build the foundational Design System and UI Kit for a new cutting-edge application called "FitList".
+
+FitList is an AI-powered nutritional app that generates weekly grocery shopping lists based on a user's budget, fitness goals, and local supermarket prices, completely eliminating the need for daily calorie tracking. The application must feel incredibly premium, trustworthy, modern, and dynamic — similar to high-end tech/fitness apps like Nike Run Club or Apple Fitness, avoiding any generic or boring "medical app" look.
+
+The Task: Your task is to create the CSS/Tailwind configuration and a single interactive "Design System / Component Showcase" web page. This page must display all the fundamental UI elements we will use across the app.</pre>
+              </div>
+              <div class="returns">
+                <div class="label">Devuelve</div>
+                <ul>
+                  <li>tailwind.config.js (tokens)</li>
+                  <li>app/globals.css</li>
+                  <li>app/design-system/page.tsx</li>
+                  <li>components/ui/* (Button, Glass…)</li>
+                </ul>
+              </div>
             </div>
+          </div>
+
+          <div class="footer-note" style="margin-top: 10px;">
+            <strong>Trazabilidad completa:</strong> los 10 prompts del proyecto entero
+            (P0–P9) viven en <code>docs/agent_prompts/00_…09_*.md</code> — cada uno con objetivo,
+            archivos a tocar y criterios de aceptación.
           </div>
         </section>
       </div>
