@@ -159,3 +159,75 @@
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 240, 255, 0.2);
 }
+
+/* =========================================================================
+ * Print styles — trim everything that's not the list itself.
+ *
+ * Goal: when the user hits "Imprimir" on /app/list, what comes out of the
+ * printer is a clean checklist on white paper, not a screenshot of the
+ * dark UI. We strip backgrounds, glow shadows, and chrome (header,
+ * dashboard, regenerate button), and force black text on white so it's
+ * legible in monochrome.
+ *
+ * Use the utility classes `.print-hide` / `.print-only` to opt out / in.
+ * ========================================================================= */
+@media print {
+  /* Strip the dark canvas — printers eat ink and dark pages look terrible. */
+  html,
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Hide chrome the printed page doesn't need: app header, sticky banners,
+     buttons, the share menu itself, supermarket logos. */
+  header,
+  .print-hide {
+    display: none !important;
+  }
+
+  /* `.print-only` shows up only on paper (e.g. a "Lista de compras"
+     headline above the items). */
+  .print-only {
+    display: block !important;
+  }
+
+  /* Glassmorphism breaks under print — flatten into clean rules. */
+  .glass,
+  .glass-strong {
+    background: #ffffff !important;
+    border: 1px solid #d5d5d5 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border-radius: 8px !important;
+  }
+
+  /* All text → near-black for legibility on monochrome printers. */
+  *,
+  *::before,
+  *::after {
+    color: #000000 !important;
+    text-shadow: none !important;
+  }
+
+  /* Avoid items splitting across pages mid-row. */
+  section,
+  li,
+  article {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  a[href]::after {
+    content: '';
+  }
+}
+
+/* `.print-only` is hidden on screen by default — `display: none` is what
+   makes the @media print rule above the only place it appears. */
+.print-only {
+  display: none;
+}

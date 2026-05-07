@@ -24,6 +24,10 @@ export interface Candidate {
   // Identity
   product_id: string; // products.id (UUID)
   food_id: string; // foods.id (UUID) — canonical food this SKU maps to
+  /** Stable foods.slug (e.g. 'pollo_pechuga'). Optional so test fixtures can
+   *  omit it; loadCandidates always populates it. Used by the per-food cap
+   *  table (lib/optimizer/food-caps.ts) to look up SKU-specific overrides. */
+  slug?: string | null;
   // Display
   name: string; // products.name (the messy supermarket SKU name)
   food_name: string; // foods.name_es (the canonical, normalized name)

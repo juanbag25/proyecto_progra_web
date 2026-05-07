@@ -20,6 +20,18 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
 
             <div className="flex items-center gap-4">
               <Link
+                href="/app/list"
+                className="hidden font-display text-xs font-semibold uppercase tracking-widest text-white/65 transition-colors duration-300 ease-premium hover:text-accent-cyan sm:inline"
+              >
+                Mi lista
+              </Link>
+              <Link
+                href="/app/history"
+                className="hidden font-display text-xs font-semibold uppercase tracking-widest text-white/65 transition-colors duration-300 ease-premium hover:text-accent-cyan sm:inline"
+              >
+                Historial
+              </Link>
+              <Link
                 href="/app/profile"
                 className="hidden font-sans text-xs text-white/55 transition-colors duration-300 ease-premium hover:text-accent-cyan sm:inline"
               >

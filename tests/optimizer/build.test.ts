@@ -346,7 +346,11 @@ describe('buildShoppingList', () => {
       dietary_restrictions: ['Vegano'],
       weekly_budget_ars: 80_000,
     });
-    const targets = makeTargets({ weekly_protein_g: 700 });
+    // Vegan candidates in FULL_CATALOG cap out at ~508g of protein when
+    // each food is ceilinged at MAX_GRAMS_PER_FOOD (1000g). 400g leaves
+    // headroom so this test stays about *filtering*, not about whether
+    // the catalog is rich enough.
+    const targets = makeTargets({ weekly_protein_g: 400 });
     const filtered = filterCandidates(FULL_CATALOG, profile);
     const result = buildShoppingList(profile, targets, filtered);
 

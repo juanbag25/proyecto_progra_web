@@ -1,4 +1,5 @@
 import type { WeeklyTargets } from '@/lib/nutrition/tdee';
+import { maxGramsForCandidate } from './food-caps';
 import { scoreCandidate } from './score';
 import type {
   Candidate,
@@ -34,11 +35,10 @@ import type {
 // ~5kg of any one product per week.
 const MAX_GRAMS_PER_SKU = 5000;
 
-// Same cap, applied across ALL SKUs sharing the same canonical food_id.
-// Prevents the "two SKUs of atún for 10kg total" output we saw in P6.B
-// smoke testing — without this, the variety penalty alone wasn't enough
-// because the second atún SKU's base score was high enough to beat it.
-const MAX_GRAMS_PER_FOOD = 5000;
+// Per-food cap is no longer a single constant — it's per-food (or per-
+// category) via maxGramsForCandidate() in food-caps.ts. Pollo gets 2 kg,
+// atún en lata gets 500 g, aceite gets 350 g, etc. Same scoring loop,
+// the cap is just looked up dynamically per candidate.
 
 // Multiplier applied to the per-iteration "needBoost" when ranking. The
 // base score (protein-per-ARS) lives in the 100–500 range; the raw
@@ -310,11 +310,13 @@ function pickBest(
     const acc = itemsByProduct.get(c.product_id);
     if (acc && acc.qty_g + MIN_QTY_G > MAX_GRAMS_PER_SKU) continue;
 
-    // Skip candidates whose canonical food is already at the per-food cap.
+    // Skip candidates whose canonical food is already at its per-food cap.
     // Without this the greedy can pick a second SKU of an already-saturated
-    // food (e.g. two atún SKUs) and bypass MAX_GRAMS_PER_SKU.
+    // food (e.g. two atún SKUs) and bypass MAX_GRAMS_PER_SKU. The cap is
+    // food-specific (see food-caps.ts) so pollo and atún are bounded
+    // independently even though they share the protein_animal category.
     const foodGramsSoFar = gramsByFoodId.get(c.food_id) ?? 0;
-    if (foodGramsSoFar + MIN_QTY_G > MAX_GRAMS_PER_FOOD) continue;
+    if (foodGramsSoFar + MIN_QTY_G > maxGramsForCandidate(c)) continue;
 
     // Skip candidates whose minimum-purchase cost (MIN_QTY_G grams) would
     // exceed the remaining budget. Otherwise a "winning" candidate could
@@ -382,7 +384,7 @@ function computeQty(
   const qtyByCapSku = MAX_GRAMS_PER_SKU - (acc?.qty_g ?? 0);
 
   const foodGramsSoFar = gramsByFoodId.get(c.food_id) ?? 0;
-  const qtyByCapFood = MAX_GRAMS_PER_FOOD - foodGramsSoFar;
+  const qtyByCapFood = maxGramsForCandidate(c) - foodGramsSoFar;
 
   return Math.max(0, Math.min(qtyByMacro, qtyByBudget, qtyByCapSku, qtyByCapFood));
 }

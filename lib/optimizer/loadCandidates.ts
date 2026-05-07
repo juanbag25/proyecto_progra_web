@@ -57,7 +57,7 @@ export async function loadCandidates(
         'image_url',
         'source_url',
         'food_id',
-        'food:foods!inner(id, name_es, category, kcal_per_100g, protein_per_100g, carbs_per_100g, fats_per_100g, fiber_per_100g, is_vegan, is_vegetarian, is_gluten_free, is_lactose_free)',
+        'food:foods!inner(id, slug, name_es, category, kcal_per_100g, protein_per_100g, carbs_per_100g, fats_per_100g, fiber_per_100g, is_vegan, is_vegetarian, is_gluten_free, is_lactose_free)',
       ].join(', '),
     )
     .eq('region', region)
@@ -96,6 +96,7 @@ interface RawJoinRow {
 
 interface RawFood {
   id: string;
+  slug: string | null;
   name_es: string;
   category: string;
   kcal_per_100g: number | string;
@@ -120,6 +121,7 @@ function toCandidate(row: RawJoinRow): Candidate | null {
   return {
     product_id: row.id,
     food_id: row.food_id,
+    slug: food.slug,
     name: row.name,
     food_name: food.name_es,
     brand: row.brand,

@@ -71,13 +71,18 @@ export default async function AppHomePage() {
   return (
     <div className="flex flex-col gap-6 py-6">
       <TargetsPanel targets={view} />
-      <div className="flex items-center justify-end gap-3">
+      <div className="flex flex-wrap items-center justify-end gap-3">
         <Link href="/app/profile">
           <Button variant="ghost" size="md">
             Ver mi perfil
           </Button>
         </Link>
         <RegenerateButton />
+        <Link href="/app/list">
+          <Button variant="primary" size="md">
+            Mi lista de la semana →
+          </Button>
+        </Link>
       </div>
     </div>
   );

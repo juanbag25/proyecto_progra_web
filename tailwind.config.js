@@ -52,9 +52,17 @@ module.exports = {
           '0%': { opacity: '0', transform: 'translateY(8px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
+        // Subtle scale dip + recover. Used as feedback when an item gets
+        // checked/unchecked — gives the toggle a haptic-like beat.
+        'check-bounce': {
+          '0%': { transform: 'scale(1)' },
+          '50%': { transform: 'scale(0.97)' },
+          '100%': { transform: 'scale(1)' },
+        },
       },
       animation: {
         'fade-up': 'fade-up 600ms cubic-bezier(0.16, 1, 0.3, 1) both',
+        'check-bounce': 'check-bounce 220ms cubic-bezier(0.16, 1, 0.3, 1)',
       },
     },
   },

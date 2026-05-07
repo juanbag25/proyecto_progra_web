@@ -41,3 +41,6 @@ next-env.d.ts
 # claude code local state
 .claude/
 CLAUDE.md.local
+
+# personal study notes (no se versiona)
+/estudio/
