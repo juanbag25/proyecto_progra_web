@@ -27,6 +27,14 @@ const DISMISS_OFFSET: Record<'left' | 'right', number> = {
   right: DISMISS_TRAVEL,
 };
 const DISMISS_MS = 250;
+// Pixels of horizontal movement required before we capture the pointer.
+// Below this we let the browser route events normally so taps on buttons,
+// inputs, and links inside the card behave like ordinary clicks.
+const CAPTURE_THRESHOLD = 6;
+// Targets where a pointerdown should NEVER initiate a swipe. Without this,
+// `setPointerCapture` on the card eats the click before it reaches the button.
+const INTERACTIVE_SELECTOR =
+  'button, a, input, select, textarea, label, [role="button"], [role="link"], [role="checkbox"], [role="switch"], [contenteditable="true"]';
 
 export const SwipeableCard = forwardRef<HTMLDivElement, SwipeableCardProps>(function SwipeableCard(
   { onSwipeLeft, onSwipeRight, threshold = 80, children, className = '' },
@@ -61,21 +69,34 @@ export const SwipeableCard = forwardRef<HTMLDivElement, SwipeableCardProps>(func
 
   const handlePointerDown = (e: PointerEvent<HTMLDivElement>) => {
     if (reducedMotion || dismissing) return;
+    // Don't hijack interactions on form controls, links, or buttons inside
+    // the card — those are first-class actions that need their own clicks.
+    const target = e.target as Element | null;
+    if (target?.closest?.(INTERACTIVE_SELECTOR)) return;
     startX.current = e.clientX;
     setDragging(true);
-    cardRef.current?.setPointerCapture(e.pointerId);
+    // Pointer capture is deferred to handlePointerMove: capturing here would
+    // route a stationary tap's pointerup elsewhere and swallow the click.
   };
 
   const handlePointerMove = (e: PointerEvent<HTMLDivElement>) => {
     if (!dragging) return;
     const next = e.clientX - startX.current;
+    if (
+      !cardRef.current?.hasPointerCapture(e.pointerId) &&
+      Math.abs(next) > CAPTURE_THRESHOLD
+    ) {
+      cardRef.current?.setPointerCapture(e.pointerId);
+    }
     setDragX((prev) => (prev === next ? prev : next));
   };
 
   const handlePointerUp = (e: PointerEvent<HTMLDivElement>) => {
     if (!dragging) return;
     setDragging(false);
-    cardRef.current?.releasePointerCapture(e.pointerId);
+    if (cardRef.current?.hasPointerCapture(e.pointerId)) {
+      cardRef.current.releasePointerCapture(e.pointerId);
+    }
 
     // Read the final delta straight off the event so the threshold check
     // doesn't see a stale `dragX` from before the last setState commit.
