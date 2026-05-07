@@ -14,18 +14,18 @@ Descomponer la construcción de FitList en fases secuenciales con tareas granula
 
 ## Fases
 
-| #   | Fase                         | Resumen                                                    |
-| --- | ---------------------------- | ---------------------------------------------------------- |
-| 0   | Foundation & Tooling         | Bootstrap Next.js + Tailwind + Supabase + Vercel           |
-| 1   | Design System & Brand Layer  | Theme, fuentes, componentes UI base, glassmorphism         |
-| 2   | Authentication               | Sign up / login / logout / RLS / middleware                |
-| 3   | Onboarding (The Interview)   | Flow swipeable de captura de perfil                        |
-| 4   | AI Nutrition Engine          | Cálculo de macros + micros semanales vía LLM + fórmulas    |
-| 5   | Web Scraping Layer           | DB viva de productos por cadena (Carrefour/Coto/Jumbo/Dia) |
-| 6   | Optimization Algorithm       | Generación de la shopping list óptima                      |
-| 7   | Shopping List UI & Dashboard | UX premium con check-off animado y rings en tiempo real    |
-| 8   | Weekly Feedback Loop         | Recalibración semanal por peso/adherencia                  |
-| 9   | Polish, Testing & Launch     | E2E, a11y, performance, SEO, deploy producción             |
+| #   | Fase                         | Estado              | Resumen                                                                  |
+| --- | ---------------------------- | ------------------- | ------------------------------------------------------------------------ |
+| 0   | Foundation & Tooling         | ✅ DONE              | Bootstrap Next.js + Tailwind + Supabase + Vercel                         |
+| 1   | Design System & Brand Layer  | ✅ DONE              | Theme, fuentes, 14 componentes UI, glassmorphism                         |
+| 2   | Authentication               | ✅ DONE              | Sign up / login / logout / RLS / middleware                              |
+| 3   | Onboarding (The Interview)   | ✅ DONE              | Flow swipeable de 7 steps + review + edit                                |
+| 4   | AI Nutrition Engine          | ✅ DONE              | TDEE + Gemini 2.5 Flash + zod validation + fallback determinístico       |
+| 5   | Web Scraping Layer           | 🟡 P5.A done · P5.B WIP | 3 cadenas VTEX (Coto descartado) + tabla `foods` canónica + match fuzzy |
+| 6   | Optimization Algorithm       | ⏳ Pending           | Greedy con JOIN products+foods, infeasibility messaging                  |
+| 7   | Shopping List UI & Dashboard | ⏳ Pending           | UX premium con check-off animado y rings en tiempo real                  |
+| 8   | Weekly Feedback Loop         | ⏳ Pending           | Recalibración semanal por peso/adherencia                                |
+| 9   | Polish, Testing & Launch     | ⏳ Pending           | E2E, a11y, performance, SEO, deploy producción                           |
 
 ---
 
@@ -141,23 +141,30 @@ Descomponer la construcción de FitList en fases secuenciales con tareas granula
 
 ## Fase 5 — Web Scraping Layer
 
-**Meta:** DB de productos viva (precio + nutrición) por supermercado y región.
+> **Realidad post P5.A** (decisiones registradas en `docs/scraping/research.md` + `compliance.md`):
+> - **Coto descartado de v1** (Oracle ATG legacy, sin API pública, ToS bloqueada). Solo Carrefour + Dia + Jumbo (los 3 son **VTEX** → un único módulo compartido).
+> - **Las cadenas no publican nutrición** en sus catálogos online. Por eso la nutrición se separó en una tabla canónica `foods` (~50 staples seedeados manualmente) y los `products` scrapeados linkean por FK opcional vía fuzzy match.
+> - **Sin Firecrawl MCP**: arrancamos con `fetch()` nativo + UA realista. La API key de Firecrawl está en `.env.local` como fallback de código si Jumbo bloquea.
+
+**Meta:** DB de productos + tabla canónica de alimentos viva por supermercado.
 
 ### Tareas
 
-- **5.1** Investigar cada cadena (Carrefour, Coto, Jumbo, Dia): ¿hay catálogo público / API? ¿Scrape DOM con Puppeteer? Documentar.
-- **5.2** Scraper module por cadena. Interface común: `searchProducts(query, region)`, `getProductDetails(productId)`.
-- **5.3** Schema normalizado `Product`: `name, brand, chain, region, price, unit, weight_g, calories_per_100g, protein_per_100g, carbs_per_100g, fats_per_100g, fiber_per_100g, micros_json, last_seen_at, source_url`.
-- **5.4** Lista de cobertura de categorías (proteína animal/vegetal, carbohidratos, grasas, vegetales, lácteos, frutas).
-- **5.5** Orquestador con rate limiting + retries + backoff.
-- **5.6** Tabla `products` con índices por `chain + region + category`.
+- **5.1** Investigar cada cadena (Carrefour, Coto, Jumbo, Dia): ¿hay catálogo público / API? ¿Anti-bot? ¿ToS? Documentar. ✅ DONE en P5.A.
+- **5.2** Scraper module compartido (los 3 son VTEX). Función `searchVtex(domain, query)` paginada.
+- **5.3** Schema split en dos tablas:
+  - **`foods`** (canónico): `slug, name_es, category, search_terms[], kcal/protein/carbs/fats/fiber per 100g, micros_json, dietary flags, source`.
+  - **`products`** (scrapeado): `external_id, chain, region, ean, food_id (FK), match_confidence, name, brand, price, list_price, unit, unit_multiplier, weight_g, image_url, source_url, last_seen_at`.
+- **5.4** Categorías + queries (~30) cubriendo los staples seedeados.
+- **5.5** Orquestador con rate limiting (1 req/2s por cadena) + retries + backoff.
+- **5.6** Tabla `products` con índices por `chain + region`, `food_id`, `ean`.
 - **5.7** Vercel Cron nightly para refresh de precios.
-- **5.8** Página admin `/dev/products` para inspeccionar la DB.
-- **5.9** Compliance: revisar ToS de cada cadena; documentar fallback (input manual de productos).
+- **5.8** Páginas admin `/dev/products` y `/dev/foods` para inspeccionar la DB.
+- **5.9** Compliance: documentado en `docs/scraping/compliance.md`. ✅ DONE.
 
-**Aceptación:** `npm run scrape:all` puebla >1k productos normalizados en una región; cron corre nightly sin error; queries <100ms.
+**Aceptación:** Después de un run de `/api/scrape`, `select count(*) from products where chain in ('carrefour','dia')` >100; al menos un tercio con `food_id` populado.
 
-**Archivos:** `scrapers/carrefour.ts`, `scrapers/coto.ts`, `scrapers/jumbo.ts`, `scrapers/dia.ts`, `scrapers/lib/*`, `app/api/cron/scrape/route.ts`, `db/migrations/004_products.sql`.
+**Archivos reales:** `scrapers/lib/{policy,types,queries,vtex,match,persist,run}.ts`, `scrapers/chains.ts`, `app/api/scrape/route.ts`, `app/dev/{products,foods}/page.tsx`, `db/migrations/004_foods.sql`, `db/migrations/005_products.sql`, `db/migrations/006_scrape_logs.sql`, `lib/supabase/admin.ts`, `vercel.json`.
 
 ---
 
@@ -179,7 +186,7 @@ Descomponer la construcción de FitList en fases secuenciales con tareas granula
 
 **Aceptación:** Dado perfil + targets + DB de productos, optimizer devuelve lista dentro de ±5% de targets, ≤presupuesto, en <5s. Casos infactibles dan error claro.
 
-**Archivos:** `lib/optimizer/*`, `app/api/shopping-list/generate/route.ts`, `db/migrations/005_shopping_lists.sql`.
+**Archivos:** `lib/optimizer/*` (tipos, loadCandidates con JOIN products+foods, filter, score, build), `app/api/shopping-list/generate/route.ts`, `db/migrations/007_shopping_lists.sql` (renumerada porque 005 ahora es products y 006 es scrape_logs).
 
 ---
 
@@ -220,7 +227,7 @@ Descomponer la construcción de FitList en fases secuenciales con tareas granula
 
 **Aceptación:** Usuario completa feedback → nueva lista generada con baseline actualizado y precios frescos. Historial muestra comparación.
 
-**Archivos:** `app/app/feedback/page.tsx`, `lib/nutrition/recalibration.ts`, `app/api/feedback/route.ts`.
+**Archivos:** `app/app/feedback/page.tsx`, `lib/nutrition/recalibration.ts`, `app/api/feedback/submit/route.ts`, `db/migrations/008_feedback.sql`.
 
 ---
 

@@ -1,10 +1,25 @@
 # Fase 4 — AI Nutrition Engine
 
+**Estado: ✅ DONE** (P4.A + P4.B implementados; commits posteriores a Fase 3).
+
 2 prompts. Convertir el perfil del usuario en macros + micros semanales con LLM + fórmulas científicas.
 
 ---
 
-## P4.A — Cálculo determinístico (TDEE + ajuste por goal)
+## Decisiones tomadas durante la implementación
+
+- **Proveedor LLM elegido**: Gemini (free tier). Modelo `gemini-2.5-flash`, SDK `@google/genai@^1.52`. La API key vive en `.env.local` como `LLM_API_KEY` (server-only, sin prefix `NEXT_PUBLIC_`).
+- **Fallback determinístico**: si el LLM falla validación dos veces, [`generateAndPersistTargets`](../../lib/nutrition/generate.ts) persiste con `method='mifflin_st_jeor'` y `micros=null` en lugar de fallar el request.
+- **Hook al fin del onboarding**: [`/api/onboarding/complete`](../../app/api/onboarding/complete/route.ts) llama directamente a `generateAndPersistTargets()` (no fetch self-loop) para evitar un round-trip extra.
+- **Persistencia**: [`db/migrations/003_nutrition_targets.sql`](../../db/migrations/003_nutrition_targets.sql) — RLS habilitado, upsert por `(user_id, week_start)`.
+- **UI**: [`components/nutrition/TargetsPanel.tsx`](../../components/nutrition/TargetsPanel.tsx) con 3 tabs (Macros / Micros / Cómo calculamos esto), renderizado en `/app` cuando hay targets.
+- **Tests**: 27 specs en [`tests/nutrition/tdee.test.ts`](../../tests/nutrition/tdee.test.ts) — Vitest 4.1 instalado durante P4.A.
+
+> Si retomás esta fase para un fix o cambio de proveedor, los prompts originales abajo siguen siendo guía válida — pero la fuente de verdad es el código en `lib/nutrition/`, `lib/llm/`, y la migración `003`.
+
+---
+
+## P4.A — Cálculo determinístico (TDEE + ajuste por goal) [DONE]
 
 ````prompt
 🎯 TAREA: 4.3, 4.4 — Implementar TDEE (Mifflin-St Jeor) + lógica de ajuste por objetivo
@@ -78,7 +93,7 @@
 
 ---
 
-## P4.B — LLM integration + API route + UI explicación
+## P4.B — LLM integration + API route + UI explicación [DONE]
 
 ````prompt
 🎯 TAREA: 4.1, 4.2, 4.5, 4.6, 4.7, 4.8 — LLM nutritional engine + persistencia + UI transparencia

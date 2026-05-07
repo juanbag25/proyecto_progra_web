@@ -209,20 +209,36 @@ Próx. agente: chequear `package.json` antes de proponer instalar nada. A esta a
 
 ## 5. Índice de fases
 
-| Archivo                                              | Fase                   | Estado / Prompts activos                                   |
-| ---------------------------------------------------- | ---------------------- | ---------------------------------------------------------- |
-| [`00_foundation.md`](./00_foundation.md)             | Foundation & Tooling   | ✅ DONE (3 sub-fases en commits 14986c1, fc8977f, 62c0a47) |
-| [`01_design_system.md`](./01_design_system.md)       | Design System & Brand  | 🟡 P1.A.1 (cierre de gap) + P1.B (5 componentes faltantes) |
-| [`02_authentication.md`](./02_authentication.md)     | Authentication         | 1 prompt                                                   |
-| [`03_onboarding.md`](./03_onboarding.md)             | Onboarding (Interview) | 2 prompts                                                  |
-| [`04_nutrition_engine.md`](./04_nutrition_engine.md) | AI Nutrition Engine    | 2 prompts                                                  |
-| [`05_scraping.md`](./05_scraping.md)                 | Web Scraping Layer     | 3 prompts                                                  |
-| [`06_optimization.md`](./06_optimization.md)         | Optimization Algorithm | 2 prompts                                                  |
-| [`07_shopping_list.md`](./07_shopping_list.md)       | Shopping List UI       | 3 prompts                                                  |
-| [`08_feedback_loop.md`](./08_feedback_loop.md)       | Weekly Feedback Loop   | 1 prompt                                                   |
-| [`09_polish_launch.md`](./09_polish_launch.md)       | Polish, Tests & Launch | 3 prompts                                                  |
+| Archivo                                              | Fase                   | Estado                                                                       |
+| ---------------------------------------------------- | ---------------------- | ---------------------------------------------------------------------------- |
+| [`00_foundation.md`](./00_foundation.md)             | Foundation & Tooling   | ✅ DONE (P0.A/B/C — commits 14986c1, fc8977f, 62c0a47)                       |
+| [`01_design_system.md`](./01_design_system.md)       | Design System & Brand  | ✅ DONE (P1.A + P1.A.1 + P1.B — 14 componentes en `components/ui/`)          |
+| [`02_authentication.md`](./02_authentication.md)     | Authentication         | ✅ DONE (P2.A — sign-up/login/RLS/middleware)                                |
+| [`03_onboarding.md`](./03_onboarding.md)             | Onboarding (Interview) | ✅ DONE (P3.A + P3.B — 7 steps + review + edit, mig 002)                     |
+| [`04_nutrition_engine.md`](./04_nutrition_engine.md) | AI Nutrition Engine    | ✅ DONE (P4.A + P4.B — Gemini 2.5 Flash, mig 003, 27 specs Vitest)           |
+| [`05_scraping.md`](./05_scraping.md)                 | Web Scraping Layer     | 🟡 P5.A done · P5.B in progress · P5.C pending — Coto descartado, 3 cadenas VTEX |
+| [`06_optimization.md`](./06_optimization.md)         | Optimization Algorithm | ⏳ PENDING (refactor: products + foods JOIN, ver header del archivo)         |
+| [`07_shopping_list.md`](./07_shopping_list.md)       | Shopping List UI       | ⏳ PENDING                                                                    |
+| [`08_feedback_loop.md`](./08_feedback_loop.md)       | Weekly Feedback Loop   | ⏳ PENDING                                                                    |
+| [`09_polish_launch.md`](./09_polish_launch.md)       | Polish, Tests & Launch | ⏳ PENDING                                                                    |
 
-**Próximo prompt a ejecutar:** `01_design_system.md` → P1.A.1.
+**Próximo prompt a ejecutar:** `05_scraping.md` → P5.B (continuación: `scrapers/lib/*`, endpoint, primer scrape live).
+
+### Numeración de migraciones (post P5.A)
+
+Las migraciones se reasignaron cuando se agregó `foods` como tabla canónica separada de `products`:
+
+| # | Tabla | Fase |
+|---|-------|------|
+| 000 | `_init` (no-op) | P0 |
+| 001 | `users_profile` | P2 |
+| 002 | onboarding fields | P3 |
+| 003 | `nutrition_targets` | P4 |
+| 004 | `foods` + seed | P5.B |
+| 005 | `products` | P5.B |
+| 006 | `scrape_logs` | P5.C |
+| 007 | `shopping_lists` + items | P6.B |
+| 008 | `weight_logs` + `weekly_feedback` | P8.A |
 
 ---
 

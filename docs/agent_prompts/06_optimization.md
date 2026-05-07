@@ -1,5 +1,9 @@
 # Fase 6 — Optimization Algorithm
 
+> **Cambio mayor vs spec original**: en Fase 5 se decidió separar precios/SKUs (`products`) de nutrición (`foods`). Cualquier rutina del optimizer que necesite calorías/macros/dietary tags **debe JOIN** `products` con `foods` por `products.food_id`. Productos con `food_id IS NULL` no se pueden optimizar (no sabemos qué aportan nutricionalmente) — se filtran fuera al inicio.
+>
+> Las flags dietarias (`is_vegan`, `is_vegetarian`, `is_gluten_free`, `is_lactose_free`) viven en `foods`. Filtrá por esas, no por categoría heurística.
+
 2 prompts. El "Shopping List Builder" — núcleo intelectual de la app.
 
 ---
@@ -21,19 +25,24 @@
 
 PARTE 1 — Formulación
 1. Crear `docs/optimizer/formulation.md` con:
-   - **Variables de decisión:** `qty[i]` = cantidad (en gramos) del producto `i`.
+   - **Variables de decisión:** `qty[i]` = cantidad (en gramos) del producto `i`. Cada `i` referencia un row de `products` JOIN `foods` por `food_id`.
    - **Objetivo:** minimizar distancia ponderada a targets nutricionales semanales + maximizar variedad + minimizar costo.
      - Función score: `0.5 * sum_macros_distance + 0.2 * micros_coverage_gap + 0.2 * cost_ratio + 0.1 * (1 - variety_score)`.
    - **Constraints duras:**
      - `sum(qty[i] * price_per_g[i]) ≤ weekly_budget`.
-     - Excluir productos que contengan alergenos del user.
-     - Excluir productos en `disliked_foods`.
-     - Excluir productos no compatibles con dieta (vegano, vegetariano, etc.) — requerimos un campo `dietary_tags` en products que se infiere por categoría/marca.
+     - Excluir productos cuya `foods.search_terms` o `foods.name_es` matchea algún allergeno del user.
+     - Excluir productos cuyo `foods.name_es` matchea `disliked_foods`.
+     - Excluir productos según restricciones dietarias del user, leyendo flags de `foods`:
+       - User vegano → `foods.is_vegan = true`.
+       - User vegetariano → `foods.is_vegetarian = true`.
+       - User celíaco / "Sin TACC" → `foods.is_gluten_free = true`.
+       - User intolerante a lactosa → `foods.is_lactose_free = true`.
+     - Excluir productos con `food_id IS NULL` (no podemos aportar nutrición sin match).
    - **Constraints blandas (penalización):**
      - Lejanía a target de proteína (peso 3x).
      - Lejanía a target de grasa y carbos (peso 1x).
-     - Falta de variedad (todos los kg de proteína viniendo de un solo producto: penalizar).
-     - Productos no en `preferred_foods` (penalización leve).
+     - Falta de variedad (todos los kg de proteína viniendo de un solo `foods.id`: penalizar).
+     - Productos cuyo `foods.name_es` no aparece en `preferred_foods` (penalización leve).
 
 PARTE 2 — Decisión de algoritmo
 2. PAUSAR Y PRESENTAR AL USUARIO 3 opciones, con trade-offs:
@@ -43,25 +52,62 @@ PARTE 2 — Decisión de algoritmo
    - **Recomendación:** empezar con (B), si los outputs son flojos pasar a (C). LP queda en el roadmap si un día queremos optimalidad demostrable.
 3. Esperar decisión del usuario. Continuar con la opción elegida.
 
-PARTE 3 — Filtrado de candidatos
-4. Crear `lib/optimizer/filter.ts` con función `filterCandidates(products, profile) → Product[]`:
-   - Excluir si `name`/`category` matchea allergies del user (búsqueda fuzzy básica).
-   - Excluir si está en `disliked_foods`.
-   - Si user es vegano/vegetariano, excluir productos en categoría `protein_animal`, `dairy`, etc.
-   - Excluir productos sin precio o sin nutrición mínima (calorías + macros).
+PARTE 3 — Tipo de candidato + filtrado
+4. Crear `lib/optimizer/types.ts` con el tipo `Candidate`:
+   ```ts
+   // Resultado del JOIN de products + foods. Ya tiene todo lo que el
+   // optimizer necesita en una sola estructura.
+   export interface Candidate {
+     product_id: string;
+     food_id: string;
+     name: string;          // products.name (la cara del SKU)
+     food_name: string;     // foods.name_es (canónico)
+     brand: string | null;
+     chain: 'carrefour' | 'jumbo' | 'dia';
+     price_ars: number;
+     weight_g: number | null;
+     // Per 100g, viene de foods:
+     kcal_per_100g: number;
+     protein_per_100g: number;
+     carbs_per_100g: number;
+     fats_per_100g: number;
+     fiber_per_100g: number;
+     // Flags dietarios:
+     is_vegan: boolean;
+     is_vegetarian: boolean;
+     is_gluten_free: boolean;
+     is_lactose_free: boolean;
+     category: string;       // foods.category
+     image_url: string | null;
+     source_url: string | null;
+   }
+   ```
+5. Crear `lib/optimizer/loadCandidates.ts` con `loadCandidates(supabase, region) → Candidate[]`:
+   - Query: `SELECT ... FROM products INNER JOIN foods ON products.food_id = foods.id WHERE products.region = $1 AND products.weight_g IS NOT NULL`.
+   - El INNER JOIN excluye automáticamente productos sin match.
+
+6. Crear `lib/optimizer/filter.ts` con `filterCandidates(candidates, profile) → Candidate[]`:
+   - Excluir si `food_name` (lowercased + sin diacríticos) contiene una alergia del user.
+   - Excluir si `food_name` está en `profile.disliked_foods` (case-insensitive).
+   - Si `profile.dietary_restrictions` incluye:
+     - `'Vegano'` → keep solo `is_vegan = true`.
+     - `'Vegetariano'` → keep solo `is_vegetarian = true`.
+     - `'Sin TACC' | 'Celíaco'` → keep solo `is_gluten_free = true`.
+     - `'Sin lactosa'` → keep solo `is_lactose_free = true`.
    - Devolver el array filtrado.
 
 PARTE 4 — Scoring
-5. Crear `lib/optimizer/score.ts` con función `scoreProduct(product, targets) → number`:
+7. Crear `lib/optimizer/score.ts` con función `scoreCandidate(candidate, targets, profile) → number`:
    - Score inicial = 0.
-   - +X si tiene mucha proteína por ARS.
-   - +Y si tiene fiber.
-   - +Z si está en `preferred_foods` (boost).
-   - −W si es ultra-procesado (heurística por nombre/marca).
+   - **+W1** por densidad proteica por ARS:
+     `(candidate.protein_per_100g / 100) × candidate.weight_g / candidate.price_ars`.
+   - **+W2** por fibra: `candidate.fiber_per_100g`.
+   - **+W3** boost si `candidate.food_name` aparece (case-insensitive) en `profile.preferred_foods`.
+   - **−W4** penalización si el nombre del producto matchea heurísticas de ultra-procesado (ej: incluye "snack", "barrita", "instantáneo", marcas específicas).
    - Devolver score normalizado 0–100.
 
 PARTE 5 — Optimizer core
-6. Crear `lib/optimizer/build.ts` con `buildShoppingList(profile, targets, products) → ShoppingList`:
+8. Crear `lib/optimizer/build.ts` con `buildShoppingList(profile, targets, candidates) → ShoppingList`:
    - Algoritmo greedy (asumiendo opción B):
      ```
      remainingBudget = profile.weekly_budget
@@ -69,36 +115,45 @@ PARTE 5 — Optimizer core
      remainingCarbs = targets.weekly_carbs_g
      remainingFats = targets.weekly_fats_g
      list = []
+     used_food_ids = new Set()
 
      while remainingBudget > 0 AND remainingProtein > 0:
-       candidate = pickBestForRemainingNeed(products, remaining*, list, profile.preferred_foods)
+       // Re-score por necesidad remanente: si falta proteína, boost candidates con alta protein_per_100g
+       candidate = pickBestForRemainingNeed(candidates, remaining*, used_food_ids, profile.preferred_foods)
        if candidate is null: break
-       qty = computeOptimalQty(candidate, remaining*)
-       cost = qty * candidate.price_per_g
-       if cost > remainingBudget: qty = remainingBudget / candidate.price_per_g
-       list.push({ product: candidate, qty })
-       update remaining*
+       qty_g = computeOptimalQty(candidate, remaining*)        // tope por SKU + por necesidad
+       cost = (qty_g / candidate.weight_g) × candidate.price_ars
+       if cost > remainingBudget: qty_g = (remainingBudget / candidate.price_ars) × candidate.weight_g
+       list.push({ candidate, qty_g, cost })
+       used_food_ids.add(candidate.food_id)
+       remainingBudget -= cost
+       remainingProtein -= (candidate.protein_per_100g / 100) × qty_g
+       remainingCarbs   -= (candidate.carbs_per_100g / 100) × qty_g
+       remainingFats    -= (candidate.fats_per_100g / 100) × qty_g
      ```
-   - Asegurar variedad: no permitir que el mismo producto aparezca 2 veces (acumular qty si ya está).
-   - Cap qty por producto a un máximo razonable (5kg de pollo es ridículo para 1 semana).
+   - Asegurar variedad: priorizar `food_id` no usados aún. Si todos los foods relevantes ya están en la lista, permitir agregar qty al mismo SKU (consolidar, no duplicar row).
+   - Cap qty por producto a un máximo razonable (ej: 5000g semanales por SKU).
 
 PARTE 6 — Tests
-7. Crear `tests/optimizer/build.test.ts` con casos:
-   - Profile vegano + budget 50k ARS + targets razonables → la lista no contiene productos animales.
-   - Profile con alergia a gluten → lista no contiene trigo, avena no certificada.
-   - Budget muy bajo (10k ARS) → función devuelve lista incompleta + flag `feasible: false`.
+9. Crear `tests/optimizer/build.test.ts` con casos (usando fixtures de `Candidate[]` — no requieren DB):
+   - Profile vegano + budget 50k ARS + targets razonables → la lista no contiene candidates con `is_vegan = false`.
+   - Profile con `'Sin TACC'` → lista no contiene candidates con `is_gluten_free = false`.
+   - Budget muy bajo (10k ARS) → función devuelve lista parcial + flag `feasible: false`.
    - Budget alto + targets normales → lista cubre ≥95% de proteína target.
+   - Productos sin food_id NO aparecen en candidates (porque `loadCandidates` hace INNER JOIN). Test fixture refleja esto.
 
 🙋 ACCIÓN HUMANA REQUERIDA: SÍ — decisión sobre algoritmo (A/B/C).
 
 ✅ CRITERIOS DE ACEPTACIÓN:
 - `docs/optimizer/formulation.md` documenta el problema.
-- Filtrado excluye correctamente alergenos / dieta.
-- Greedy core devuelve lista en <2s para 1000 productos.
+- Filtrado excluye correctamente alergenos / dieta vía flags de `foods`.
+- Greedy core devuelve lista en <2s para 1000 candidates.
 - Tests unitarios pasan.
 
 📁 ARCHIVOS A CREAR:
 - docs/optimizer/formulation.md
+- lib/optimizer/types.ts
+- lib/optimizer/loadCandidates.ts
 - lib/optimizer/filter.ts
 - lib/optimizer/score.ts
 - lib/optimizer/build.ts
@@ -144,7 +199,7 @@ PARTE 1 — Stats de salida
    ```
 
 PARTE 2 — Schema y migración
-2. Crear migración `db/migrations/006_shopping_lists.sql`:
+2. Crear migración `db/migrations/007_shopping_lists.sql` (006 está reservado para `scrape_logs` en P5.C):
    ```sql
    create table if not exists shopping_lists (
      id uuid primary key default gen_random_uuid(),
@@ -191,11 +246,12 @@ PARTE 3 — API route
 4. Crear `app/api/shopping-list/generate/route.ts` (POST):
    - Server-only. Verificar sesión.
    - Leer perfil + targets de la semana actual.
-   - Leer `products` filtrando por región del user.
-   - Llamar a `buildShoppingList`.
+   - Cargar candidates con `loadCandidates(supabase, profile.region)` — JOIN de `products` × `foods`, filtrado por región.
+   - Aplicar `filterCandidates(candidates, profile)`.
+   - Llamar a `buildShoppingList(profile, targets, filtered)`.
    - Si `feasible = false`, devolver 200 con la lista parcial + `feasibility_message` clara.
      - Ej: "Tu presupuesto cubre solo el 70% de tu proteína target. Sugerencias: subir presupuesto a $X, o ajustar el goal a 'maintenance'."
-   - Persistir en `shopping_lists` + `shopping_list_items`.
+   - Persistir en `shopping_lists` + `shopping_list_items` (con `product_id` apuntando a `products.id`).
    - Devolver el ID + summary.
 
 PARTE 4 — Manejo de infeasibilidad
@@ -223,7 +279,7 @@ PARTE 5 — Tests
 - app/api/shopping-list/generate/route.ts
 - lib/optimizer/build.ts (modificar)
 - tests/optimizer/api.test.ts
-- db/migrations/006_shopping_lists.sql
+- db/migrations/007_shopping_lists.sql
 ````
 
 ---

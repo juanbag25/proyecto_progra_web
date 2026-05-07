@@ -21,7 +21,7 @@
 📋 INSTRUCCIONES:
 
 PARTE 1 — Schema y migración
-1. Crear migración `db/migrations/007_feedback.sql`:
+1. Crear migración `db/migrations/008_feedback.sql` (007 está reservado para `shopping_lists` en P6.B):
    ```sql
    create table if not exists weight_logs (
      id uuid primary key default gen_random_uuid(),
@@ -120,7 +120,7 @@ PARTE 6 — Gráfico de progreso
 - app/api/feedback/submit/route.ts
 - components/feedback/WeekComparison.tsx
 - components/feedback/ProgressChart.tsx
-- db/migrations/007_feedback.sql
+- db/migrations/008_feedback.sql
 - app/app/page.tsx (banner sticky de feedback pendiente)
 - app/app/profile/page.tsx (mostrar ProgressChart)
 ````

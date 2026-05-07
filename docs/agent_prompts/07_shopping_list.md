@@ -1,5 +1,7 @@
 # Fase 7 — Shopping List UI & Dashboard
 
+> **Nota arquitectural (post Fase 5)**: la nutrición vive en `foods`, no en `products`. Cualquier query que necesite calorías/macros de un item debe hacer `LEFT JOIN foods ON products.food_id = foods.id`. Items con `food_id IS NULL` se cuentan para budget pero no aportan a las rings de macros — son productos sin match canónico (no debería pasar después del INNER JOIN del optimizer en Fase 6, pero el tipo permite el caso por defensividad).
+
 3 prompts. La cara visible de la app: donde el usuario "compra" su semana.
 
 ---
@@ -20,7 +22,7 @@
 
 📋 INSTRUCCIONES:
 1. Crear `app/app/list/page.tsx` (server component):
-   - Leer la última lista del user (`shopping_lists` + items joineados a `products`).
+   - Leer la última lista del user: `shopping_lists` + `shopping_list_items` joineados a `products`, y `products` joineados (LEFT JOIN) a `foods` para nutrición. En Supabase JS: `.select('*, items:shopping_list_items(*, product:products(*, food:foods(*)))')`.
    - Si no hay lista, mostrar empty state con CTA "Generar mi lista" → llama a `/api/shopping-list/generate`.
    - Si hay lista, renderizar el layout completo.
 
@@ -47,7 +49,7 @@
    - `formatGrams(g)`: "500g" o "1.5kg" según magnitud.
    - `formatDate(date, locale='es-AR')`.
 
-5. La lista debe agruparse visualmente por categoría: "Proteínas", "Carbohidratos", "Grasas", "Vegetales", "Lácteos", etc. Cada grupo con un mini-header.
+5. La lista debe agruparse visualmente por categoría: "Proteínas", "Carbohidratos", "Grasas", "Vegetales", "Lácteos", etc. La categoría se lee de `food.category` (foods.category enum). Items sin food_id van a un grupo "Otros".
 
 6. Agregar `app/api/shopping-list/items/[id]/check/route.ts` (PATCH):
    - Toggle del campo `checked` del item con id dado.
@@ -97,7 +99,9 @@ PARTE 1 — Animación de check-off
 
 PARTE 2 — Estado de macros / budget en tiempo real
 3. Crear `lib/list/derive-progress.ts` con función pura `computeProgress(items, targets, budget) → ProgressState`:
+   - Cada item incluye `qty_g`, `cost`, `checked`, y el `food` joineado (via LEFT JOIN). Macros aportadas = `(qty_g / 100) × food.protein_per_100g`, idem para carbs y fats.
    - Calcula sumas: cost de items checked, macros aportadas por items checked.
+   - Items sin `food` se ignoran para macros (sólo cuentan para budget).
    - Devuelve %s relativos a targets.
 4. Crear hook `useListProgress(listId)`:
    - Suscripción opt-in con Supabase Realtime al canal `shopping_list_items` (por list_id).
