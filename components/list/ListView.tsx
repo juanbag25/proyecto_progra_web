@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { SummaryHeader } from '@/components/dashboard/SummaryHeader';
 import { Button } from '@/components/ui/Button';
@@ -266,6 +267,13 @@ function ListHero({
         <Button type="button" variant="ghost" size="md" onClick={onShare}>
           Compartir
         </Button>
+        {!readOnly && (
+          <Link href="/app/feedback">
+            <Button type="button" variant="ghost" size="md">
+              Cerrar semana
+            </Button>
+          </Link>
+        )}
         {!readOnly && <RegenerateListButton variant="outline" />}
       </div>
     </header>

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { GlassCard } from '@/components/ui/GlassCard';
+import { FeedbackBanner } from '@/components/feedback/FeedbackBanner';
 import { RegenerateButton } from '@/components/nutrition/RegenerateButton';
 import {
   TargetsPanel,
@@ -11,6 +12,8 @@ import { requireUser } from '@/lib/auth';
 import { createClient } from '@/lib/supabase/server';
 
 export const dynamic = 'force-dynamic';
+
+const FEEDBACK_DUE_DAYS = 7;
 
 interface ProfileRow {
   onboarding_completed: boolean | null;
@@ -28,6 +31,15 @@ interface TargetsRow {
   llm_explanation: string | null;
 }
 
+interface LatestListRow {
+  week_start: string;
+  created_at: string;
+}
+
+interface FeedbackRow {
+  week_start: string;
+}
+
 export default async function AppHomePage() {
   const user = await requireUser();
   const supabase = createClient();
@@ -42,15 +54,33 @@ export default async function AppHomePage() {
     return <OnboardingPrompt />;
   }
 
-  const { data: targetsRow } = await supabase
-    .from('nutrition_targets')
-    .select(
-      'week_start, weekly_calories, weekly_protein_g, weekly_carbs_g, weekly_fats_g, weekly_fiber_g, micros_json, method, llm_explanation',
-    )
-    .eq('user_id', user.id)
-    .order('week_start', { ascending: false })
-    .limit(1)
-    .maybeSingle<TargetsRow>();
+  // Targets, latest list, and any existing feedback for that list's week —
+  // all three are independent reads, so fetch in parallel.
+  const [{ data: targetsRow }, { data: latestListArr }, { data: feedbackRows }] = await Promise.all(
+    [
+      supabase
+        .from('nutrition_targets')
+        .select(
+          'week_start, weekly_calories, weekly_protein_g, weekly_carbs_g, weekly_fats_g, weekly_fiber_g, micros_json, method, llm_explanation',
+        )
+        .eq('user_id', user.id)
+        .order('week_start', { ascending: false })
+        .limit(1)
+        .maybeSingle<TargetsRow>(),
+      supabase
+        .from('shopping_lists')
+        .select('week_start, created_at')
+        .eq('user_id', user.id)
+        .order('week_start', { ascending: false })
+        .limit(1),
+      supabase
+        .from('weekly_feedback')
+        .select('week_start')
+        .eq('user_id', user.id)
+        .order('week_start', { ascending: false })
+        .limit(4),
+    ],
+  );
 
   if (!targetsRow) {
     return <NoTargetsYet />;
@@ -68,8 +98,22 @@ export default async function AppHomePage() {
     llm_explanation: targetsRow.llm_explanation,
   };
 
+  // Banner condition: there's a list, it's at least 7 days old, AND no
+  // feedback exists for that list's week_start.
+  const latestList = (latestListArr as LatestListRow[] | null)?.[0] ?? null;
+  const filedWeeks = new Set(
+    ((feedbackRows as FeedbackRow[] | null) ?? []).map((r) => r.week_start),
+  );
+  const banner = computeBanner(latestList, filedWeeks);
+
   return (
     <div className="flex flex-col gap-6 py-6">
+      {banner && (
+        <FeedbackBanner
+          weekStart={banner.weekStart}
+          daysSinceGenerated={banner.daysSinceGenerated}
+        />
+      )}
       <TargetsPanel targets={view} />
       <div className="flex flex-wrap items-center justify-end gap-3">
         <Link href="/app/profile">
@@ -86,6 +130,19 @@ export default async function AppHomePage() {
       </div>
     </div>
   );
+}
+
+function computeBanner(
+  list: LatestListRow | null,
+  filedWeeks: Set<string>,
+): { weekStart: string; daysSinceGenerated: number } | null {
+  if (!list) return null;
+  if (filedWeeks.has(list.week_start)) return null;
+  const created = Date.parse(list.created_at);
+  if (Number.isNaN(created)) return null;
+  const days = Math.floor((Date.now() - created) / (1000 * 60 * 60 * 24));
+  if (days < FEEDBACK_DUE_DAYS) return null;
+  return { weekStart: list.week_start, daysSinceGenerated: days };
 }
 
 function OnboardingPrompt() {

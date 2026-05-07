@@ -126,6 +126,22 @@
   transform: scale(1.18);
 }
 
+/* Reduced-motion: kill the slider thumb's hover/active scale animation.
+ * Tailwind's `motion-reduce:` utilities don't reach pseudo-elements, so
+ * the suppression has to happen at the CSS layer. */
+@media (prefers-reduced-motion: reduce) {
+  .fitlist-slider::-webkit-slider-thumb,
+  .fitlist-slider::-moz-range-thumb {
+    transition: none !important;
+  }
+  .fitlist-slider:hover::-webkit-slider-thumb,
+  .fitlist-slider:hover::-moz-range-thumb,
+  .fitlist-slider:active::-webkit-slider-thumb,
+  .fitlist-slider:active::-moz-range-thumb {
+    transform: none !important;
+  }
+}
+
 /* Native select chevron suppression */
 .fitlist-select {
   -webkit-appearance: none;

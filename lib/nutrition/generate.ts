@@ -74,6 +74,11 @@ export type GenerateResult =
 export async function generateAndPersistTargets(
   supabase: SupabaseClient,
   userId: string,
+  /** Optional override for the week the targets row should anchor to. Used
+   *  by the feedback flow to write next-week's targets without overwriting
+   *  the row for the week that just closed. Defaults to the current ISO
+   *  week (Monday) when omitted. */
+  weekStart?: string,
 ): Promise<GenerateResult> {
   const { data: profile, error: profileError } = await supabase
     .from('users_profile')
@@ -147,7 +152,7 @@ export async function generateAndPersistTargets(
     console.error('[nutrition/generate] LLM enrichment failed, using baseline:', err);
   }
 
-  const week_start = startOfIsoWeek();
+  const week_start = weekStart ?? startOfIsoWeek();
 
   const { error: upsertError } = await supabase.from('nutrition_targets').upsert(
     {

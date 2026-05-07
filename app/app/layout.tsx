@@ -1,8 +1,18 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { type ReactNode } from 'react';
+import { AppNavLink } from '@/components/app/AppNavLink';
 import { Button } from '@/components/ui/Button';
 import { ToastProvider } from '@/components/ui/Toast';
 import { requireUser } from '@/lib/auth';
+
+// Defense-in-depth: robots.ts already disallows /app/* at the crawler
+// level, but stamping noindex into the rendered <head> means even a
+// search engine that ignores robots.txt (or a human sharing the URL into
+// a bot-scraped channel) won't surface the user's private app surface.
+export const metadata: Metadata = {
+  robots: { index: false, follow: false, googleBot: { index: false, follow: false } },
+};
 
 export default async function AppLayout({ children }: { children: ReactNode }) {
   const user = await requireUser();
@@ -18,31 +28,19 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
               </span>
             </Link>
 
-            <div className="flex items-center gap-4">
-              <Link
-                href="/app/list"
-                className="hidden font-display text-xs font-semibold uppercase tracking-widest text-white/65 transition-colors duration-300 ease-premium hover:text-accent-cyan sm:inline"
-              >
-                Mi lista
-              </Link>
-              <Link
-                href="/app/history"
-                className="hidden font-display text-xs font-semibold uppercase tracking-widest text-white/65 transition-colors duration-300 ease-premium hover:text-accent-cyan sm:inline"
-              >
-                Historial
-              </Link>
-              <Link
-                href="/app/profile"
-                className="hidden font-sans text-xs text-white/55 transition-colors duration-300 ease-premium hover:text-accent-cyan sm:inline"
-              >
+            <nav aria-label="Navegación principal" className="flex items-center gap-4">
+              <AppNavLink href="/app/list">Mi lista</AppNavLink>
+              <AppNavLink href="/app/history">Historial</AppNavLink>
+              <AppNavLink href="/app/feedback">Feedback</AppNavLink>
+              <AppNavLink href="/app/profile" variant="muted">
                 {user.email}
-              </Link>
+              </AppNavLink>
               <form action="/auth/signout" method="post">
                 <Button type="submit" variant="ghost" size="sm">
                   Salir
                 </Button>
               </form>
-            </div>
+            </nav>
           </div>
         </header>
 

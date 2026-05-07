@@ -1,7 +1,18 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { type ReactNode } from 'react';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { ToastProvider } from '@/components/ui/Toast';
+
+// All auth pages share this title in absence of per-page overrides. The
+// pages themselves are client components ('use client'), so we centralize
+// the head metadata at the layout level rather than splitting each page
+// into a server wrapper just to export a `Metadata` block.
+export const metadata: Metadata = {
+  title: 'Tu cuenta',
+  // Auth pages don't need to be indexed — they're functional, not content.
+  robots: { index: false, follow: false },
+};
 
 export default function AuthLayout({ children }: { children: ReactNode }) {
   return (

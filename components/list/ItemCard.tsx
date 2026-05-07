@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
+import { memo, useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { formatARS, formatGrams } from '@/lib/format';
 
@@ -44,7 +44,7 @@ export interface ItemCardProps {
   readOnly?: boolean;
 }
 
-export function ItemCard({
+function ItemCardImpl({
   itemId: _itemId,
   productName,
   brand,
@@ -191,3 +191,31 @@ function formatPackLabel(qtyG: number, weightG: number): string {
   const packSize = formatGrams(weightG);
   return units === 1 ? packSize : `${units} × ${packSize}`;
 }
+
+/**
+ * Memoized export — without this, every toggle in `ListView` re-renders
+ * every card in the list (the parent's `checkedIds` Set update triggers
+ * a render of the whole tree). On a 30-item list that's a lot of wasted
+ * work for one click.
+ *
+ * The custom comparator skips `onToggle` deliberately: the parent
+ * recreates the closure on every render, but it always does the same
+ * thing for a given `itemId`, so re-rendering on identity-only changes
+ * defeats the memo. Every other prop is a primitive, so reference
+ * equality on those is correct.
+ */
+export const ItemCard = memo(ItemCardImpl, (prev, next) => {
+  return (
+    prev.itemId === next.itemId &&
+    prev.productName === next.productName &&
+    prev.brand === next.brand &&
+    prev.chain === next.chain &&
+    prev.imageUrl === next.imageUrl &&
+    prev.priceArs === next.priceArs &&
+    prev.qtyG === next.qtyG &&
+    prev.weightG === next.weightG &&
+    prev.checked === next.checked &&
+    prev.pending === next.pending &&
+    prev.readOnly === next.readOnly
+  );
+});

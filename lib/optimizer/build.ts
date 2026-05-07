@@ -1,5 +1,6 @@
 import type { WeeklyTargets } from '@/lib/nutrition/tdee';
 import { maxGramsForCandidate } from './food-caps';
+import { jitterFor, type RotationPenalty } from './rotation';
 import { scoreCandidate } from './score';
 import type {
   Candidate,
@@ -8,6 +9,18 @@ import type {
   ShoppingListResult,
   ShoppingListSummary,
 } from './types';
+
+/** Optional knobs that introduce cross-run variety without changing the
+ *  greedy's structure. Both default to "off" — pure-input runs (tests,
+ *  golden-file fixtures) stay deterministic. */
+export interface OptimizerOptions {
+  /** Per-food multiplier in (0, 1] that suppresses recently-used foods.
+   *  See `lib/optimizer/rotation.ts` for the curve. */
+  rotationPenalty?: RotationPenalty;
+  /** Seed for stable per-candidate jitter (±5%). When omitted, jitter is
+   *  disabled and the optimizer is fully deterministic. */
+  seed?: string;
+}
 
 /**
  * Greedy "Shopping List Builder" — the core of P6.A.
@@ -82,6 +95,7 @@ export function buildShoppingList(
   profile: OptimizerProfile,
   targets: WeeklyTargets,
   candidates: Candidate[],
+  options: OptimizerOptions = {},
 ): ShoppingListResult {
   // Pre-compute static scores once. Reused every iteration.
   const baseScores = new Map<string, number>();
@@ -127,6 +141,7 @@ export function buildShoppingList(
       baseScores,
       itemsByProduct,
       gramsByFoodId,
+      options,
     );
     if (!pick) break;
 
@@ -281,8 +296,9 @@ function formatNumber(n: number): string {
 }
 
 /** Re-rank all viable candidates by (static score) × (variety penalty)
- *  + (need boost). Linear scan — N is at most a few thousand and we run
- *  for ~30 iterations, so 30 × 3000 = 90k comparisons. Negligible. */
+ *  × (rotation penalty) × (1 + jitter) + (need boost). Linear scan — N is
+ *  at most a few thousand and we run for ~30 iterations, so 30 × 3000 =
+ *  90k comparisons. Negligible. */
 function pickBest(
   candidates: Candidate[],
   remaining: RemainingNeeds,
@@ -291,6 +307,7 @@ function pickBest(
   baseScores: Map<string, number>,
   itemsByProduct: Map<string, ItemAccumulator>,
   gramsByFoodId: Map<string, number>,
+  options: OptimizerOptions,
 ): Candidate | null {
   let best: Candidate | null = null;
   let bestScore = -Infinity;
@@ -331,6 +348,12 @@ function pickBest(
     // Strong enough to encourage spreading, soft enough not to forbid it.
     const varietyMult = usedFoodIds.has(c.food_id) ? 0.5 : 1.0;
 
+    // Cross-week rotation penalty — discourages picking the same foods
+    // we picked in recent weeks. Defaults to 1.0 (no penalty) when the
+    // map is missing or this food wasn't recently used. See
+    // lib/optimizer/rotation.ts for the curve.
+    const rotationMult = options.rotationPenalty?.get(c.food_id) ?? 1.0;
+
     // Need-boost: weighted nutritional density per 100g, biased by the
     // share of each macro we still owe. Picks the candidate that closes
     // the largest gap fastest, naturally. Amplified to compete with the
@@ -340,7 +363,16 @@ function pickBest(
       carbsShare * c.carbs_per_100g +
       fatsShare * c.fats_per_100g;
 
-    const score = base * varietyMult + NEED_BOOST_WEIGHT * needBoost;
+    let score = base * varietyMult * rotationMult + NEED_BOOST_WEIGHT * needBoost;
+
+    // Seeded jitter (±5%) — breaks ties when two candidates score within
+    // a few percent of each other, so back-to-back regens of the same
+    // week land on slightly different SKUs. No-op when no seed is passed
+    // (tests stay deterministic).
+    if (options.seed) {
+      score *= 1 + jitterFor(c.product_id, options.seed);
+    }
+
     if (score > bestScore) {
       bestScore = score;
       best = c;

@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { GlassCard } from '@/components/ui/GlassCard';
+import { ProgressChart, type WeightPoint } from '@/components/feedback/ProgressChart';
+import type { FitnessGoal } from '@/lib/nutrition/tdee';
 import { requireUser } from '@/lib/auth';
 import { createClient } from '@/lib/supabase/server';
 
@@ -38,7 +40,7 @@ interface ProfileRow {
   gender: string | null;
   activity_level: string | null;
   exercise_type: string[] | null;
-  fitness_goal: string | null;
+  fitness_goal: FitnessGoal | null;
   preferred_foods: string[] | null;
   disliked_foods: string[] | null;
   allergies: string[] | null;
@@ -47,6 +49,11 @@ interface ProfileRow {
   region: string | null;
   weekly_budget_ars: number | string | null;
   onboarding_completed: boolean | null;
+}
+
+interface WeightLogRow {
+  weight_kg: number | string;
+  logged_at: string;
 }
 
 function Row({ label, children }: { label: string; children: React.ReactNode }) {
@@ -75,15 +82,30 @@ export default async function ProfilePage() {
   const user = await requireUser();
   const supabase = createClient();
 
-  const { data: profile } = await supabase
-    .from('users_profile')
-    .select(
-      'age, weight_kg, height_cm, gender, activity_level, exercise_type, fitness_goal, preferred_foods, disliked_foods, allergies, dietary_restrictions, country, region, weekly_budget_ars, onboarding_completed',
-    )
-    .eq('id', user.id)
-    .maybeSingle<ProfileRow>();
+  // Profile + the last 12 weight logs in parallel — both reads are
+  // independent and cheap.
+  const [{ data: profile }, { data: weightRows }] = await Promise.all([
+    supabase
+      .from('users_profile')
+      .select(
+        'age, weight_kg, height_cm, gender, activity_level, exercise_type, fitness_goal, preferred_foods, disliked_foods, allergies, dietary_restrictions, country, region, weekly_budget_ars, onboarding_completed',
+      )
+      .eq('id', user.id)
+      .maybeSingle<ProfileRow>(),
+    supabase
+      .from('weight_logs')
+      .select('weight_kg, logged_at')
+      .eq('user_id', user.id)
+      .order('logged_at', { ascending: false })
+      .limit(12),
+  ]);
 
   const onboardingDone = profile?.onboarding_completed ?? false;
+
+  // Chart wants oldest-first; the query returned newest-first.
+  const weightLogs: WeightPoint[] = ((weightRows as WeightLogRow[] | null) ?? [])
+    .map((r) => ({ logged_at: r.logged_at, weight_kg: Number(r.weight_kg) }))
+    .reverse();
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-6 py-6">
@@ -118,6 +140,10 @@ export default async function ProfilePage() {
             Tu onboarding está en pausa. Completalo para empezar a generar listas semanales.
           </p>
         </GlassCard>
+      )}
+
+      {onboardingDone && (
+        <ProgressChart points={weightLogs} goal={profile?.fitness_goal ?? null} />
       )}
 
       <Section title="Biometría">
