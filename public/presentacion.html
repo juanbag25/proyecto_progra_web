@@ -1,0 +1,1724 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FitList — Parcial Oral · Programación Web</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0a0f1a;
+        --bg-raised: #121826;
+        --bg-elevated: #1a2032;
+        --hairline: rgba(255, 255, 255, 0.08);
+        --hairline-strong: rgba(255, 255, 255, 0.14);
+        --text: #e8eaed;
+        --text-muted: rgba(255, 255, 255, 0.7);
+        --text-faint: rgba(255, 255, 255, 0.5);
+        --cyan: #00f0ff;
+        --mint: #00e676;
+        --coral: #ff6b6b;
+        --orange: #ff8e53;
+        --grad: linear-gradient(135deg, #00f0ff 0%, #00e676 100%);
+        --grad-warm: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--bg);
+        color: var(--text);
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        overflow: hidden;
+      }
+
+      body {
+        background:
+          radial-gradient(1200px 600px at 80% -10%, rgba(0, 240, 255, 0.06), transparent 60%),
+          radial-gradient(900px 500px at -10% 110%, rgba(0, 230, 118, 0.05), transparent 60%),
+          var(--bg);
+      }
+
+      /* Slide deck container — 16:9 canvas, scaled to fit. */
+      .deck {
+        position: fixed;
+        inset: 0;
+        display: grid;
+        place-items: center;
+      }
+
+      .stage {
+        position: relative;
+        width: min(96vw, calc(96vh * 16 / 9));
+        aspect-ratio: 16 / 9;
+        max-width: 1600px;
+      }
+
+      .slide {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        padding: 48px 64px;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 320ms cubic-bezier(0.16, 1, 0.3, 1);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.015), rgba(255, 255, 255, 0));
+        border-radius: 24px;
+        border: 1px solid var(--hairline);
+        overflow: hidden;
+      }
+
+      .slide.active {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      /* Slide chrome */
+      .meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-family: 'Outfit', sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.22em;
+        color: var(--text-faint);
+        margin-bottom: 16px;
+      }
+
+      .meta .brand {
+        background: var(--grad);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        font-weight: 800;
+      }
+
+      .slide h1 {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 700;
+        font-size: clamp(28px, 3.4vw, 56px);
+        letter-spacing: -0.02em;
+        line-height: 1.05;
+        margin: 0 0 12px 0;
+      }
+
+      .slide h2 {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 600;
+        font-size: clamp(18px, 1.6vw, 26px);
+        letter-spacing: -0.01em;
+        line-height: 1.2;
+        margin: 0 0 8px 0;
+      }
+
+      .slide p {
+        font-size: clamp(14px, 1.05vw, 18px);
+        color: var(--text-muted);
+        line-height: 1.55;
+        margin: 0 0 8px 0;
+      }
+
+      .lead {
+        font-size: clamp(15px, 1.25vw, 20px);
+        color: var(--text-muted);
+        max-width: 78ch;
+      }
+
+      .accent {
+        background: var(--grad);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 14px;
+        border-radius: 999px;
+        border: 1px solid var(--hairline-strong);
+        background: rgba(255, 255, 255, 0.03);
+        font-family: 'Outfit', sans-serif;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--cyan);
+      }
+
+      .pill.warm {
+        color: var(--coral);
+        border-color: rgba(255, 107, 107, 0.25);
+      }
+
+      .pill.mint {
+        color: var(--mint);
+        border-color: rgba(0, 230, 118, 0.25);
+      }
+
+      /* ========== SLIDE 1 — COVER ========== */
+      .cover {
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        background:
+          radial-gradient(800px 400px at 50% 30%, rgba(0, 240, 255, 0.08), transparent 60%),
+          radial-gradient(600px 300px at 50% 80%, rgba(0, 230, 118, 0.05), transparent 60%);
+      }
+
+      .cover .meta {
+        position: absolute;
+        top: 32px;
+        left: 64px;
+        right: 64px;
+      }
+
+      .cover h1 {
+        font-size: clamp(64px, 8vw, 132px);
+        font-weight: 800;
+        letter-spacing: -0.04em;
+        line-height: 1;
+        margin: 12px 0 18px 0;
+      }
+
+      .cover .tagline {
+        font-family: 'Outfit', sans-serif;
+        font-size: clamp(18px, 1.6vw, 26px);
+        font-weight: 500;
+        color: var(--text-muted);
+        max-width: 720px;
+        line-height: 1.4;
+        margin: 0 0 28px 0;
+      }
+
+      .cover .author {
+        position: absolute;
+        bottom: 40px;
+        left: 64px;
+        right: 64px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 24px;
+      }
+
+      .cover .author-block {
+        text-align: left;
+        font-family: 'Outfit', sans-serif;
+        font-size: 13px;
+        color: var(--text-faint);
+        letter-spacing: 0.04em;
+      }
+
+      .cover .author-block strong {
+        display: block;
+        color: var(--text);
+        font-weight: 600;
+        font-size: 16px;
+        letter-spacing: -0.01em;
+        text-transform: none;
+        margin-bottom: 2px;
+      }
+
+      .cover .author-block.right {
+        text-align: right;
+      }
+
+      /* ========== GENERIC LAYOUT HELPERS ========== */
+      .body {
+        flex: 1;
+        display: grid;
+        gap: 24px;
+        margin-top: 12px;
+        min-height: 0;
+      }
+
+      .body.cols-2 {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .body.cols-3 {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+
+      .card {
+        background: rgba(255, 255, 255, 0.025);
+        border: 1px solid var(--hairline);
+        border-radius: 16px;
+        padding: 22px 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .card .label {
+        font-family: 'Outfit', sans-serif;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--cyan);
+      }
+
+      .card .label.mint {
+        color: var(--mint);
+      }
+      .card .label.warm {
+        color: var(--coral);
+      }
+
+      .card h3 {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 600;
+        font-size: clamp(16px, 1.3vw, 22px);
+        margin: 0;
+        letter-spacing: -0.01em;
+      }
+
+      .card ul {
+        margin: 4px 0 0 0;
+        padding: 0;
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .card ul li {
+        position: relative;
+        padding-left: 18px;
+        font-size: clamp(13px, 1vw, 16px);
+        color: var(--text-muted);
+        line-height: 1.5;
+      }
+
+      .card ul li::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0.6em;
+        width: 8px;
+        height: 1px;
+        background: var(--cyan);
+      }
+
+      .card ul li.mint::before {
+        background: var(--mint);
+      }
+      .card ul li.warm::before {
+        background: var(--coral);
+      }
+
+      code,
+      .mono {
+        font-family: 'JetBrains Mono', ui-monospace, monospace;
+        font-size: 0.85em;
+        color: var(--cyan);
+        background: rgba(0, 240, 255, 0.06);
+        padding: 1px 6px;
+        border-radius: 4px;
+      }
+
+      /* ========== SLIDE 2 — DIAGRAM ========== */
+      .diagram {
+        flex: 1;
+        display: grid;
+        grid-template-rows: auto 1fr;
+        gap: 16px;
+        min-height: 0;
+      }
+
+      .diag-canvas {
+        display: grid;
+        grid-template-columns: 220px 1fr 280px;
+        gap: 18px;
+        min-height: 0;
+      }
+
+      .diag-col {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      .node {
+        position: relative;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--hairline);
+        border-radius: 12px;
+        padding: 12px 16px;
+        font-family: 'Outfit', sans-serif;
+      }
+
+      .node .node-label {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--text-faint);
+        margin-bottom: 4px;
+      }
+
+      .node .node-title {
+        font-weight: 600;
+        font-size: 15px;
+        color: var(--text);
+        letter-spacing: -0.01em;
+      }
+
+      .node .node-desc {
+        font-family: 'Inter', sans-serif;
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-top: 4px;
+        line-height: 1.4;
+      }
+
+      .node.cyan {
+        border-color: rgba(0, 240, 255, 0.3);
+        background: rgba(0, 240, 255, 0.05);
+      }
+      .node.cyan .node-label {
+        color: var(--cyan);
+      }
+
+      .node.mint {
+        border-color: rgba(0, 230, 118, 0.3);
+        background: rgba(0, 230, 118, 0.05);
+      }
+      .node.mint .node-label {
+        color: var(--mint);
+      }
+
+      .node.warm {
+        border-color: rgba(255, 107, 107, 0.3);
+        background: rgba(255, 107, 107, 0.05);
+      }
+      .node.warm .node-label {
+        color: var(--coral);
+      }
+
+      .node.frame {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        background: linear-gradient(
+          180deg,
+          rgba(0, 240, 255, 0.04) 0%,
+          rgba(0, 230, 118, 0.03) 100%
+        );
+        border: 1px solid var(--hairline-strong);
+      }
+
+      .frame-title {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 700;
+        font-size: 14px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--text);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .frame-title .dot {
+        width: 8px;
+        height: 8px;
+        background: var(--grad);
+        border-radius: 999px;
+      }
+
+      .layer-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 10px;
+      }
+
+      .layer-pill {
+        text-align: center;
+        padding: 10px 8px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid var(--hairline);
+      }
+
+      .layer-pill .lp-label {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.15em;
+        color: var(--text-faint);
+        margin-bottom: 4px;
+        text-transform: uppercase;
+      }
+
+      .layer-pill .lp-title {
+        font-family: 'Outfit', sans-serif;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text);
+      }
+
+      .layer-pill .lp-desc {
+        font-size: 11px;
+        color: var(--text-muted);
+        margin-top: 2px;
+      }
+
+      .routes-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .route-chip {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 11px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: rgba(0, 240, 255, 0.08);
+        border: 1px solid rgba(0, 240, 255, 0.2);
+        color: var(--cyan);
+      }
+
+      /* Deploy lane (right column) */
+      .deploy-lane {
+        background: rgba(255, 142, 83, 0.05);
+        border: 1px solid rgba(255, 142, 83, 0.2);
+        border-radius: 12px;
+        padding: 14px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .deploy-step {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-family: 'Outfit', sans-serif;
+        font-size: 13px;
+        color: var(--text);
+      }
+
+      .deploy-step .num {
+        width: 22px;
+        height: 22px;
+        border-radius: 999px;
+        background: var(--grad-warm);
+        color: #0a0f1a;
+        display: grid;
+        place-items: center;
+        font-weight: 700;
+        font-size: 11px;
+        flex-shrink: 0;
+      }
+
+      .deploy-step small {
+        display: block;
+        font-family: 'Inter', sans-serif;
+        font-size: 11px;
+        color: var(--text-faint);
+        font-weight: 400;
+        margin-top: 1px;
+      }
+
+      .deploy-step .step-text {
+        line-height: 1.2;
+      }
+
+      .deploy-arrow {
+        height: 14px;
+        margin-left: 11px;
+        border-left: 1.5px dashed rgba(255, 142, 83, 0.4);
+      }
+
+      .arrow {
+        align-self: center;
+        color: var(--text-faint);
+        font-size: 18px;
+        font-weight: 700;
+      }
+
+      .legend {
+        display: flex;
+        gap: 16px;
+        font-size: 11px;
+        font-family: 'JetBrains Mono', monospace;
+        color: var(--text-faint);
+        margin-top: 6px;
+      }
+
+      .legend span {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .legend .sw {
+        width: 10px;
+        height: 10px;
+        border-radius: 3px;
+      }
+
+      /* ========== FLOW ROW ========== */
+      .flow {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        flex-wrap: wrap;
+      }
+
+      .flow .step {
+        flex: 1;
+        min-width: 0;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--hairline);
+        border-radius: 12px;
+        padding: 14px 16px;
+        font-family: 'Outfit', sans-serif;
+      }
+
+      .flow .step .label {
+        font-size: 10px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--text-faint);
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+
+      .flow .step .title {
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      .flow .arrow {
+        color: var(--cyan);
+      }
+
+      /* ========== PROGRESS / NAV ========== */
+      .nav {
+        position: fixed;
+        bottom: 18px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 14px;
+        background: rgba(18, 24, 38, 0.7);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--hairline);
+        border-radius: 999px;
+        z-index: 10;
+        font-family: 'Outfit', sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-muted);
+      }
+
+      .nav button {
+        background: transparent;
+        border: 0;
+        color: var(--text-muted);
+        cursor: pointer;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .nav button:hover {
+        color: var(--cyan);
+        background: rgba(0, 240, 255, 0.08);
+      }
+
+      .nav .dots {
+        display: flex;
+        gap: 6px;
+      }
+
+      .nav .dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.2);
+        cursor: pointer;
+        transition: all 240ms;
+      }
+
+      .nav .dot.active {
+        background: var(--grad);
+        width: 22px;
+      }
+
+      .nav .counter {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 11px;
+        color: var(--text-faint);
+        letter-spacing: 0.05em;
+      }
+
+      .hint {
+        position: fixed;
+        bottom: 18px;
+        right: 24px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10px;
+        color: var(--text-faint);
+        letter-spacing: 0.08em;
+        z-index: 10;
+        opacity: 0.7;
+      }
+
+      /* ========== TWO-COLUMN CONTENT ROW ========== */
+      .feature-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        margin-top: 8px;
+      }
+
+      .footer-note {
+        margin-top: auto;
+        padding-top: 14px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 11px;
+        color: var(--text-faint);
+        letter-spacing: 0.05em;
+        border-top: 1px solid var(--hairline);
+      }
+
+      .footer-note strong {
+        color: var(--cyan);
+        font-weight: 600;
+      }
+
+      /* ========== CI/CD VISUAL ========== */
+      .pipeline {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 8px;
+        margin-top: 8px;
+      }
+
+      .pipe-step {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--hairline);
+        border-radius: 12px;
+        padding: 14px 12px;
+        text-align: center;
+        font-family: 'Outfit', sans-serif;
+        position: relative;
+      }
+
+      .pipe-step .icon {
+        font-size: 22px;
+        margin-bottom: 6px;
+        background: var(--grad);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        font-weight: 800;
+      }
+
+      .pipe-step .name {
+        font-weight: 600;
+        font-size: 13px;
+        color: var(--text);
+      }
+
+      .pipe-step .sub {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10px;
+        color: var(--text-faint);
+        margin-top: 4px;
+        font-weight: 400;
+      }
+
+      /* Inline keyboard hint */
+      kbd {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10px;
+        padding: 2px 6px;
+        border-radius: 4px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid var(--hairline-strong);
+        color: var(--text-muted);
+      }
+
+      /* ========== SLIDE 2 — VERTICAL ARCH DIAGRAM ========== */
+      .arch {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-top: 4px;
+        min-height: 0;
+      }
+
+      /* User + Browser horizontal row at the top */
+      .user-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 18px;
+      }
+
+      .user-card {
+        background: rgba(0, 240, 255, 0.05);
+        border: 1px solid rgba(0, 240, 255, 0.28);
+        border-radius: 12px;
+        padding: 10px 18px;
+        font-family: 'Outfit', sans-serif;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        min-width: 250px;
+      }
+
+      .user-card .num {
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: 0.22em;
+        color: var(--cyan);
+        text-transform: uppercase;
+        flex-shrink: 0;
+      }
+
+      .user-card .glyph {
+        font-size: 24px;
+        line-height: 1;
+        flex-shrink: 0;
+      }
+
+      .user-card .meta-text {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.2;
+      }
+
+      .user-card .meta-text .name {
+        font-weight: 700;
+        font-size: 13px;
+        color: var(--text);
+      }
+
+      .user-card .meta-text .sub {
+        font-family: 'Inter', sans-serif;
+        font-size: 10.5px;
+        color: var(--text-faint);
+        font-weight: 400;
+        margin-top: 1px;
+      }
+
+      .user-arrow {
+        font-size: 22px;
+        color: rgba(0, 240, 255, 0.5);
+        font-weight: 200;
+        letter-spacing: -2px;
+      }
+
+      /* Vertical connector (HTTPS, fetch) — labeled bidirectional pills */
+      .conn-v {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        padding: 2px 0;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10.5px;
+        font-weight: 600;
+      }
+
+      .conn-v .pill-lbl {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 4px 12px;
+        border-radius: 999px;
+        background: rgba(0, 240, 255, 0.07);
+        border: 1px solid rgba(0, 240, 255, 0.22);
+        color: var(--cyan);
+        white-space: nowrap;
+      }
+
+      .conn-v .pill-lbl.back {
+        background: rgba(0, 230, 118, 0.07);
+        border-color: rgba(0, 230, 118, 0.22);
+        color: var(--mint);
+      }
+
+      .conn-v.fetch .pill-lbl {
+        background: rgba(255, 107, 107, 0.08);
+        border-color: rgba(255, 107, 107, 0.25);
+        color: var(--coral);
+      }
+
+      .conn-v .pill-lbl .ar {
+        font-size: 13px;
+        font-weight: 200;
+        letter-spacing: -1px;
+        line-height: 1;
+        opacity: 0.85;
+      }
+
+      /* Frontend box — full width, fills available height */
+      .fe-box {
+        flex: 1;
+        background:
+          linear-gradient(180deg, rgba(0, 240, 255, 0.06), rgba(0, 230, 118, 0.04));
+        border: 1.5px solid rgba(0, 240, 255, 0.25);
+        border-radius: 14px;
+        padding: 14px 22px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        min-height: 0;
+      }
+
+      .fe-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        border-bottom: 1px solid var(--hairline);
+        padding-bottom: 8px;
+      }
+
+      .fe-header .title {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 700;
+        font-size: 16px;
+        letter-spacing: -0.01em;
+        color: var(--text);
+      }
+
+      .fe-header .badge {
+        font-family: 'Outfit', sans-serif;
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: 0.22em;
+        color: var(--cyan);
+        text-transform: uppercase;
+      }
+
+      .fe-layers {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 8px;
+      }
+
+      .fe-layer {
+        text-align: center;
+        padding: 8px 8px;
+        border-radius: 9px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid var(--hairline);
+      }
+
+      .fe-layer .lkey {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        color: var(--cyan);
+        text-transform: uppercase;
+      }
+
+      .fe-layer.css .lkey {
+        color: var(--mint);
+      }
+
+      .fe-layer.js .lkey {
+        color: var(--coral);
+      }
+
+      .fe-layer .lrole {
+        font-family: 'Outfit', sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text);
+        margin-top: 1px;
+      }
+
+      .fe-layer .ldesc {
+        font-size: 10px;
+        color: var(--text-faint);
+        margin-top: 1px;
+      }
+
+      .fe-row {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .fe-row .rlabel {
+        flex-shrink: 0;
+        font-family: 'Outfit', sans-serif;
+        font-size: 9.5px;
+        font-weight: 800;
+        letter-spacing: 0.18em;
+        color: var(--text-faint);
+        text-transform: uppercase;
+        width: 110px;
+      }
+
+      .fe-row .rcontent {
+        flex: 1;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        align-items: center;
+      }
+
+      .chip {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10.5px;
+        padding: 3px 9px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--hairline);
+        color: var(--text-muted);
+        white-space: nowrap;
+      }
+
+      .chip.cy {
+        color: var(--cyan);
+        background: rgba(0, 240, 255, 0.07);
+        border-color: rgba(0, 240, 255, 0.22);
+      }
+
+      .chip.mt {
+        color: var(--mint);
+        background: rgba(0, 230, 118, 0.07);
+        border-color: rgba(0, 230, 118, 0.22);
+      }
+
+      .text-muted {
+        font-family: 'Outfit', sans-serif;
+        font-size: 10.5px;
+        color: var(--text-faint);
+        margin: 0 3px;
+      }
+
+      /* API box — full width, slim */
+      .api-box {
+        background: rgba(255, 107, 107, 0.05);
+        border: 1.5px solid rgba(255, 107, 107, 0.28);
+        border-radius: 12px;
+        padding: 11px 18px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .api-box .badge {
+        font-family: 'Outfit', sans-serif;
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: 0.22em;
+        color: var(--coral);
+        text-transform: uppercase;
+        flex-shrink: 0;
+      }
+
+      .api-box .title {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 700;
+        font-size: 13px;
+        color: var(--text);
+        flex-shrink: 0;
+      }
+
+      .api-box .endpoints {
+        display: flex;
+        gap: 5px;
+        flex-wrap: wrap;
+        flex: 1;
+        justify-content: flex-end;
+      }
+
+      .api-box .endpoint {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10px;
+        padding: 2px 8px;
+        border-radius: 4px;
+        background: rgba(255, 107, 107, 0.1);
+        color: var(--coral);
+      }
+
+      /* Deploy strip */
+      .deploy-strip {
+        border-top: 1px dashed rgba(255, 142, 83, 0.3);
+        padding-top: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 4px;
+      }
+
+      .deploy-strip .strip-title {
+        font-family: 'Outfit', sans-serif;
+        font-size: 9.5px;
+        font-weight: 800;
+        letter-spacing: 0.22em;
+        color: var(--orange);
+        text-transform: uppercase;
+      }
+
+      .deploy-pipe {
+        display: grid;
+        grid-template-columns: 1fr 28px 1fr 28px 1fr 28px 1fr 28px 1fr;
+        gap: 4px;
+        align-items: center;
+      }
+
+      .deploy-pipe .step {
+        background: rgba(255, 142, 83, 0.05);
+        border: 1px solid rgba(255, 142, 83, 0.22);
+        border-radius: 10px;
+        padding: 9px 8px;
+        text-align: center;
+      }
+
+      .deploy-pipe .step .name {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 700;
+        font-size: 13px;
+        color: var(--text);
+      }
+
+      .deploy-pipe .step .sub {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 9.5px;
+        color: var(--text-faint);
+        margin-top: 2px;
+      }
+
+      .deploy-pipe .a {
+        text-align: center;
+        color: rgba(255, 142, 83, 0.7);
+        font-size: 18px;
+        font-weight: 200;
+        line-height: 1;
+      }
+
+      /* Server / Client zone tags + split rows */
+      .zone-tag {
+        font-family: 'Outfit', sans-serif;
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: 0.2em;
+        padding: 3px 9px;
+        border-radius: 999px;
+        text-transform: uppercase;
+        white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        flex-shrink: 0;
+      }
+
+      .zone-tag.server {
+        background: rgba(255, 107, 107, 0.1);
+        color: var(--coral);
+        border: 1px solid rgba(255, 107, 107, 0.3);
+      }
+
+      .zone-tag.client {
+        background: rgba(0, 240, 255, 0.08);
+        color: var(--cyan);
+        border: 1px solid rgba(0, 240, 255, 0.28);
+      }
+
+      .chip.warm {
+        color: var(--coral);
+        background: rgba(255, 107, 107, 0.08);
+        border-color: rgba(255, 107, 107, 0.22);
+      }
+
+      .split {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        flex: 1;
+        align-items: stretch !important;
+      }
+
+      .split-line {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .split-line .where {
+        font-family: 'Inter', sans-serif;
+        font-size: 10.5px;
+        color: var(--text-faint);
+        font-style: italic;
+        font-weight: 400;
+      }
+
+      .pill-note {
+        font-family: 'Inter', sans-serif;
+        font-size: 10px;
+        font-style: italic;
+        color: var(--text-faint);
+        text-align: center;
+        margin-top: 1px;
+      }
+
+      @media (max-width: 900px) {
+        .stage {
+          width: 96vw;
+        }
+        .slide {
+          padding: 28px 28px;
+        }
+        .body.cols-2,
+        .body.cols-3,
+        .feature-row {
+          grid-template-columns: 1fr;
+        }
+        .diag-canvas {
+          grid-template-columns: 1fr;
+        }
+        .pipeline {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="deck">
+      <div class="stage" id="stage">
+        <!-- ============ SLIDE 1 — COVER ============ -->
+        <section class="slide cover active" data-slide="1">
+          <div class="meta">
+            <span>71.38 · Programación Web · Q1 2026</span>
+            <span class="brand">FitList</span>
+          </div>
+
+          <div class="pill">Parcial Oral · Semana 8</div>
+          <h1>Fit<span class="accent">List</span></h1>
+          <p class="tagline">
+            Lista de compras semanal optimizada por IA, calibrada a tus macros y a tu presupuesto —
+            con precios reales de supermercados argentinos.
+          </p>
+
+          <div class="author">
+            <div class="author-block">
+              <strong>Juan Gramaglia</strong>
+              ITBA · 71.38 Programación Web
+            </div>
+            <div class="author-block right">
+              <strong>Repositorio</strong>
+              github.com/juanbag25/proyecto_progra_web
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ SLIDE 2 — DIAGRAMA DE ARQUITECTURA ============ -->
+        <section class="slide" data-slide="2">
+          <div class="meta">
+            <span>Momento 1 · Diagrama de arquitectura</span>
+            <span>02 / 06</span>
+          </div>
+
+          <h1>¿Cómo se <span class="accent">conforma y funciona</span> FitList?</h1>
+
+          <div class="arch">
+            <!-- ===== TOP: User + Browser horizontal row ===== -->
+            <div class="user-row">
+              <div class="user-card">
+                <span class="num">1 · Usuario</span>
+                <span class="glyph">👤</span>
+                <span class="meta-text">
+                  <span class="name">Persona</span>
+                  <span class="sub">abre la app</span>
+                </span>
+              </div>
+              <div class="user-arrow">→</div>
+              <div class="user-card">
+                <span class="num">2 · Navegador</span>
+                <span class="glyph">🌐</span>
+                <span class="meta-text">
+                  <span class="name">Chrome · Safari</span>
+                  <span class="sub">interpreta HTML/CSS/JS</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- ===== HTTPS connector ===== -->
+            <div class="conn-v">
+              <div class="pill-lbl">
+                <span class="ar">↓</span>
+                <span>request HTTPS</span>
+              </div>
+              <div class="pill-lbl back">
+                <span>HTML + CSS + JS</span>
+                <span class="ar">↑</span>
+              </div>
+            </div>
+
+            <!-- ===== Frontend box (full width) ===== -->
+            <div class="fe-box">
+              <div class="fe-header">
+                <div class="title">3 · Frontend — Next.js (App Router)</div>
+                <div class="badge">React + Next</div>
+              </div>
+
+              <!-- HTML / CSS / JS layers -->
+              <div class="fe-layers">
+                <div class="fe-layer">
+                  <div class="lkey">HTML</div>
+                  <div class="lrole">Estructura</div>
+                  <div class="ldesc">semántica · a11y</div>
+                </div>
+                <div class="fe-layer css">
+                  <div class="lkey">CSS</div>
+                  <div class="lrole">Estilo</div>
+                  <div class="ldesc">Tailwind · responsive</div>
+                </div>
+                <div class="fe-layer js">
+                  <div class="lkey">JS / React</div>
+                  <div class="lrole">Lógica</div>
+                  <div class="ldesc">eventos · render</div>
+                </div>
+              </div>
+
+              <!-- Routes -->
+              <div class="fe-row">
+                <div class="rlabel">4 · Rutas</div>
+                <div class="rcontent">
+                  <span class="chip cy">/login</span>
+                  <span class="chip cy">/onboarding</span>
+                  <span class="chip cy">/app</span>
+                  <span class="chip cy">/app/list</span>
+                  <span class="chip cy">/app/profile</span>
+                  <span class="chip cy">/app/history</span>
+                </div>
+              </div>
+
+              <!-- Components — split by zone (server vs client) -->
+              <div class="fe-row">
+                <div class="rlabel">5 · Componentes</div>
+                <div class="rcontent split">
+                  <div class="split-line">
+                    <span class="zone-tag server">▲ Server</span>
+                    <span class="chip warm">app/page.tsx</span>
+                    <span class="chip warm">layout.tsx</span>
+                    <span class="chip warm">RootLayout</span>
+                    <span class="where">corren en Vercel · llaman Supabase directo (sin /api/*)</span>
+                  </div>
+                  <div class="split-line">
+                    <span class="zone-tag client">🌐 Client <span style="opacity: 0.7; letter-spacing: 0.05em;">'use client'</span></span>
+                    <span class="chip cy">ListView</span>
+                    <span class="chip cy">OnboardingFlow</span>
+                    <span class="chip cy">ItemCard</span>
+                    <span class="chip cy">TargetsPanel</span>
+                    <span class="where">corren en el navegador · usan useState + fetch('/api/*')</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- State -->
+              <div class="fe-row">
+                <div class="rlabel">6 · Estado</div>
+                <div class="rcontent">
+                  <span class="chip cy">useState</span>
+                  <span class="chip cy">useEffect</span>
+                  <span class="text-muted">cliente · cambia → re-render</span>
+                  <span class="chip mt">Supabase</span>
+                  <span class="text-muted">servidor · persistente</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- ===== fetch connector ===== -->
+            <div class="conn-v fetch">
+              <div class="pill-lbl">
+                <span class="ar">↓</span>
+                <span>7 · fetch('/api/...')</span>
+              </div>
+              <div class="pill-lbl">
+                <span>JSON</span>
+                <span class="ar">↑</span>
+              </div>
+            </div>
+
+            <!-- ===== API Routes (full width, slim) ===== -->
+            <div class="api-box">
+              <div class="badge">8 · API</div>
+              <div class="title">API Routes (server-side)</div>
+              <div class="endpoints">
+                <span class="endpoint">/api/shopping-list/generate</span>
+                <span class="endpoint">/api/nutrition/targets</span>
+                <span class="endpoint">/api/feedback</span>
+              </div>
+            </div>
+
+            <!-- ===== Deploy strip ===== -->
+            <div class="deploy-strip">
+              <div class="strip-title">9 · Flujo de deploy — del código al sitio publicado</div>
+              <div class="deploy-pipe">
+                <div class="step">
+                  <div class="name">Editor</div>
+                  <div class="sub">VS Code · TS</div>
+                </div>
+                <div class="a">→</div>
+                <div class="step">
+                  <div class="name">git push</div>
+                  <div class="sub">main / branch</div>
+                </div>
+                <div class="a">→</div>
+                <div class="step">
+                  <div class="name">GitHub</div>
+                  <div class="sub">repo · PR</div>
+                </div>
+                <div class="a">→</div>
+                <div class="step">
+                  <div class="name">Vercel CI/CD</div>
+                  <div class="sub">install · build · lint</div>
+                </div>
+                <div class="a">→</div>
+                <div class="step">
+                  <div class="name">URL pública</div>
+                  <div class="sub">HTTPS · live</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ SLIDE 3 — HTML / CSS / JS ============ -->
+        <section class="slide" data-slide="3">
+          <div class="meta">
+            <span>Momento 2 · Fundamentos</span>
+            <span>03 / 06</span>
+          </div>
+
+          <h1>HTML, CSS y JavaScript<br /><span class="accent">cada uno con su rol</span></h1>
+          <p class="lead">
+            La separación clásica: <strong>qué</strong> hay en pantalla,
+            <strong>cómo se ve</strong> y <strong>cómo reacciona</strong>.
+          </p>
+
+          <div class="body cols-3">
+            <div class="card">
+              <span class="label">HTML — estructura</span>
+              <h3>Semántica + accesibilidad</h3>
+              <ul>
+                <li>Etiquetas con significado: <code>&lt;header&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;article&gt;</code></li>
+                <li>Botones reales (<code>&lt;button&gt;</code>) con foco visible y <code>aria-label</code></li>
+                <li>SEO: <code>metadata</code> en <code>app/layout.tsx</code> + <code>sitemap.ts</code> + <code>robots.ts</code></li>
+                <li><code>lang="es"</code>, contraste alto, navegación por teclado</li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <span class="label mint">CSS — estilo</span>
+              <h3>Tailwind + responsive</h3>
+              <ul class="">
+                <li class="mint">Utility classes: <code>flex</code>, <code>grid</code>, <code>gap-4</code>, <code>md:grid-cols-2</code></li>
+                <li class="mint">Tokens propios: <code>bg-canvas-base</code>, <code>accent-cyan</code>, <code>shadow-glow-cyan</code></li>
+                <li class="mint">Mobile-first: breakpoints <code>sm</code> / <code>md</code> / <code>lg</code></li>
+                <li class="mint">Glassmorphism: clase <code>.glass</code> con <code>backdrop-blur</code></li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <span class="label warm">JavaScript — lógica</span>
+              <h3>Eventos, fetch, validación</h3>
+              <ul>
+                <li class="warm">Eventos: <code>onClick</code> tilda un ítem y dispara re-render</li>
+                <li class="warm"><code>async/await</code> + <code>fetch('/api/...')</code> para pedir/guardar datos</li>
+                <li class="warm">Validación con <strong>Zod</strong> (formularios + payloads de API)</li>
+                <li class="warm">Módulos ES6: <code>import</code> / <code>export</code> entre archivos</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="footer-note">
+            <strong>Asincronía:</strong> sin <code>await</code>, el código sigue antes de que la
+            respuesta llegue → renderizo con datos vacíos. Con <code>await</code>, espero la
+            respuesta y recién después actualizo el UI.
+          </div>
+        </section>
+
+        <!-- ============ SLIDE 4 — REACT ============ -->
+        <section class="slide" data-slide="4">
+          <div class="meta">
+            <span>Momento 3 · React</span>
+            <span>04 / 06</span>
+          </div>
+
+          <h1>React: <span class="accent">componentes que reaccionan</span></h1>
+          <p class="lead">
+            Toda la UI es una función que recibe datos y devuelve JSX. Cuando los datos cambian, la
+            función se vuelve a ejecutar y React actualiza la pantalla.
+          </p>
+
+          <div class="body cols-2">
+            <div class="card">
+              <span class="label">Componentes + props</span>
+              <h3>Funciones que reciben datos</h3>
+              <ul>
+                <li><strong>Componente:</strong> función que retorna JSX (HTML escrito en JS)</li>
+                <li><strong>Props:</strong> datos que el padre le pasa al hijo — solo lectura</li>
+                <li>Ej: <code>&lt;ItemCard item={...} onToggle={...} /&gt;</code></li>
+                <li>Composición: páginas grandes hechas de componentes chicos reutilizables</li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <span class="label mint">State + re-render</span>
+              <h3><code>useState</code> · datos que cambian</h3>
+              <ul>
+                <li class="mint"><strong>State:</strong> datos internos del componente que SÍ cambian</li>
+                <li class="mint">Cuando llamo <code>setX(...)</code>, React re-ejecuta el componente</li>
+                <li class="mint">Ej en <code>ListView</code>: el set de ítems tildados es state</li>
+                <li class="mint">El <code>SummaryHeader</code> recalcula los rings en cada toggle</li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <span class="label warm">useEffect</span>
+              <h3>Efectos secundarios</h3>
+              <ul>
+                <li class="warm">Corre <em>después</em> del render — para tareas que no son JSX</li>
+                <li class="warm">Casos típicos: pedir datos, suscripciones, timers, listeners</li>
+                <li class="warm">Tiene array de dependencias: <code>[items, weekStart]</code></li>
+                <li class="warm">Si el array no cambia, el efecto no vuelve a correr</li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <span class="label">¿Cuándo re-renderiza?</span>
+              <h3>Regla mental simple</h3>
+              <ul>
+                <li>Cambia el <strong>state</strong> del componente → re-render</li>
+                <li>Cambian las <strong>props</strong> que recibe → re-render</li>
+                <li>Re-renderiza el padre → re-renderizan sus hijos (por defecto)</li>
+                <li>React calcula la diferencia y actualiza solo lo necesario en el DOM</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ SLIDE 5 — NEXT.JS + CI/CD ============ -->
+        <section class="slide" data-slide="5">
+          <div class="meta">
+            <span>Momento 3 · Next.js · Momento 1 · CI/CD</span>
+            <span>05 / 06</span>
+          </div>
+
+          <h1>Next.js + <span class="accent">deploy a Vercel</span></h1>
+          <p class="lead">
+            Next.js organiza la app por carpetas y separa lo que corre en el servidor de lo que
+            corre en el navegador. Vercel toma el código de GitHub y lo publica solo.
+          </p>
+
+          <div class="feature-row">
+            <div class="card">
+              <span class="label">App Router</span>
+              <h3>Carpetas = rutas</h3>
+              <ul>
+                <li><code>app/login/page.tsx</code> → <code>/login</code></li>
+                <li><code>app/app/list/page.tsx</code> → <code>/app/list</code></li>
+                <li><code>app/api/feedback/route.ts</code> → <code>POST /api/feedback</code></li>
+                <li>Layouts compartidos por sub-árbol (<code>layout.tsx</code>)</li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <span class="label mint">Cliente vs servidor</span>
+              <h3>Dónde corre cada cosa</h3>
+              <ul>
+                <li class="mint"><strong>Server Component (default):</strong> traen datos de Supabase, render en servidor, llegan como HTML al navegador</li>
+                <li class="mint"><strong>Client Component (<code>'use client'</code>):</strong> usan <code>useState</code>, eventos, ejecutan JS en el navegador</li>
+                <li class="mint">Las API keys se quedan en server — nunca llegan al bundle del navegador</li>
+              </ul>
+            </div>
+          </div>
+
+          <h2 style="margin-top: 18px; color: var(--coral);">Pipeline CI/CD</h2>
+          <div class="pipeline">
+            <div class="pipe-step">
+              <div class="icon">⌨</div>
+              <div class="name">Editor</div>
+              <div class="sub">VS Code · TS</div>
+            </div>
+            <div class="pipe-step">
+              <div class="icon">⤴</div>
+              <div class="name">git push</div>
+              <div class="sub">main / feature</div>
+            </div>
+            <div class="pipe-step">
+              <div class="icon">◷</div>
+              <div class="name">GitHub</div>
+              <div class="sub">repo · PR review</div>
+            </div>
+            <div class="pipe-step">
+              <div class="icon">▲</div>
+              <div class="name">Vercel build</div>
+              <div class="sub">install · lint · build</div>
+            </div>
+            <div class="pipe-step">
+              <div class="icon">✦</div>
+              <div class="name">URL pública</div>
+              <div class="sub">fitlist.app · HTTPS</div>
+            </div>
+          </div>
+
+          <div class="footer-note">
+            Cada <code>push</code> a <code>main</code> dispara un build automático. Si compila + lint
+            ok → reemplaza producción. Si rompe → el deploy anterior queda online y se puede
+            <strong>rollback</strong> con un click. Variables de entorno (claves de Supabase, IA) se
+            cargan en el panel de Vercel — nunca en el repo.
+          </div>
+        </section>
+
+        <!-- ============ SLIDE 6 — IA ============ -->
+        <section class="slide" data-slide="6">
+          <div class="meta">
+            <span>Momento 4 · Uso fundamentado de IA</span>
+            <span>06 / 06</span>
+          </div>
+
+          <h1>IA como <span class="accent">copiloto</span>, no como autor</h1>
+          <p class="lead">
+            Yo diseñé el producto, partí el trabajo en fases y validé cada cambio. La IA escribió
+            código a partir de prompts dirigidos — pero la arquitectura, las decisiones y la prueba
+            son mías.
+          </p>
+
+          <div class="body cols-2">
+            <div class="card">
+              <span class="label">Herramienta + estrategia</span>
+              <h3>Claude Code (Anthropic)</h3>
+              <ul>
+                <li>Elegida por su capacidad de leer el repo entero y razonar con contexto largo</li>
+                <li>Trabajo dividido en <strong>10 fases (P0–P9)</strong>, cada una con un prompt propio</li>
+                <li>Una fase por vez: criterios de aceptación claros antes de avanzar</li>
+                <li>Stack lockeado en <code>CLAUDE.md</code> — la IA no introduce dependencias por su cuenta</li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <span class="label mint">Cómo validé</span>
+              <h3>Cada cambio se prueba</h3>
+              <ul>
+                <li class="mint"><code>npm run lint</code> + <code>npx tsc --noEmit</code> en cada paso</li>
+                <li class="mint">Probar el flujo en el navegador (<code>npm run dev</code>) — no solo "compila"</li>
+                <li class="mint">Vitest para lógica crítica (optimizador, parsers)</li>
+                <li class="mint">Lectura crítica del diff: si no entiendo una línea, la cuestiono</li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <span class="label warm">Errores reales detectados</span>
+              <h3>Limitaciones que tuve que corregir</h3>
+              <ul>
+                <li class="warm">Edge cases de fechas (semanas que arrancan domingo) mal manejados</li>
+                <li class="warm">Tipos de TS demasiado laxos (<code>any</code>) — los reforcé con Zod</li>
+                <li class="warm">Lógica de matching producto → comida que dejaba pasar falsos positivos</li>
+                <li class="warm">Una redirect inicial apuntaba a <code>/design-system</code> en vez de <code>/login</code></li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <span class="label">Documentación de prompts</span>
+              <h3>Trazabilidad del trabajo con IA</h3>
+              <ul>
+                <li>10 prompts versionados en <code>docs/agent_prompts/00_…09_*.md</code></li>
+                <li>Cada uno con: objetivo, archivos a tocar, criterios de aceptación</li>
+                <li>Plan general en <code>docs/implementation_plan.md</code></li>
+                <li>Reglas globales (estética, stack, RLS) en <code>CLAUDE.md</code></li>
+              </ul>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- NAVIGATION -->
+    <div class="nav" id="nav">
+      <button id="prev" aria-label="Anterior">‹</button>
+      <div class="dots" id="dots"></div>
+      <span class="counter" id="counter">01 / 06</span>
+      <button id="next" aria-label="Siguiente">›</button>
+    </div>
+
+    <div class="hint">
+      <kbd>←</kbd> <kbd>→</kbd> · <kbd>1</kbd>–<kbd>6</kbd> · <kbd>F</kbd> fullscreen
+    </div>
+
+    <script>
+      const slides = Array.from(document.querySelectorAll('.slide'));
+      const dotsEl = document.getElementById('dots');
+      const counter = document.getElementById('counter');
+      let i = 0;
+
+      slides.forEach((_, idx) => {
+        const d = document.createElement('span');
+        d.className = 'dot' + (idx === 0 ? ' active' : '');
+        d.addEventListener('click', () => go(idx));
+        dotsEl.appendChild(d);
+      });
+
+      function go(n) {
+        i = Math.max(0, Math.min(slides.length - 1, n));
+        slides.forEach((s, idx) => s.classList.toggle('active', idx === i));
+        Array.from(dotsEl.children).forEach((d, idx) =>
+          d.classList.toggle('active', idx === i),
+        );
+        counter.textContent = `${String(i + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}`;
+      }
+
+      document.getElementById('prev').addEventListener('click', () => go(i - 1));
+      document.getElementById('next').addEventListener('click', () => go(i + 1));
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+          e.preventDefault();
+          go(i + 1);
+        } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+          e.preventDefault();
+          go(i - 1);
+        } else if (e.key === 'Home') {
+          go(0);
+        } else if (e.key === 'End') {
+          go(slides.length - 1);
+        } else if (e.key === 'f' || e.key === 'F') {
+          if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+          else document.exitFullscreen();
+        } else if (/^[1-9]$/.test(e.key)) {
+          go(parseInt(e.key, 10) - 1);
+        }
+      });
+    </script>
+  </body>
+</html>
