@@ -1603,7 +1603,7 @@
               <span class="label mint">CSS — estilo</span>
               <h3>Tailwind + responsive</h3>
               <ul class="">
-                <li class="mint">Utility classes: <code>flex</code>, <code>grid</code>, <code>gap-4</code>, <code>md:grid-cols-2</code></li>
+                <li class="mint">Utility classes: <code>flex</code>, <code>grid</code></li>
                 <li class="mint">Tokens propios: <code>bg-canvas-base</code>, <code>accent-cyan</code>, <code>shadow-glow-cyan</code></li>
                 <li class="mint">Mobile-first: breakpoints <code>sm</code> / <code>md</code> / <code>lg</code></li>
                 <li class="mint">Glassmorphism: clase <code>.glass</code> con <code>backdrop-blur</code></li>
@@ -1650,7 +1650,6 @@
               <ul>
                 <li><strong>Componente:</strong> función que retorna JSX (HTML escrito en JS)</li>
                 <li><strong>Props:</strong> datos que el padre le pasa al hijo — solo lectura</li>
-                <li>Ej: <code>&lt;ItemCard item={...} onToggle={...} /&gt;</code></li>
                 <li>Páginas grandes hechas de componentes chicos reutilizables</li>
               </ul>
             </div>
@@ -1661,7 +1660,6 @@
               <h3><code>useState</code> · cambia → re-render</h3>
               <ul>
                 <li class="mint"><strong>State:</strong> datos del componente que SÍ cambian</li>
-                <li class="mint">Llamar <code>setX(...)</code> re-ejecuta el componente</li>
                 <li class="mint">Re-render si cambia el <strong>state</strong> o las <strong>props</strong></li>
                 <li class="mint">Ej en <code>ListView</code>: los ítems tildados son state → los anillos del dashboard se actualizan en cada toggle</li>
               </ul>
@@ -1674,7 +1672,6 @@
               <ul>
                 <li class="warm">Corre <em>después</em> del render — para tareas que no son JSX</li>
                 <li class="warm">Casos típicos: pedir datos, suscripciones, timers</li>
-                <li class="warm">Array de dependencias: <code>[items, weekStart]</code></li>
                 <li class="warm">Si el array no cambia, el efecto no vuelve a correr</li>
               </ul>
             </div>
