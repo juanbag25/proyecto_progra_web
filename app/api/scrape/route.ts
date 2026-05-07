@@ -14,16 +14,21 @@ interface RequestBody {
 }
 
 export async function POST(request: Request) {
-  const expected = process.env.SCRAPE_SECRET;
-  if (!expected) {
+  // Two valid bearer tokens:
+  //   SCRAPE_SECRET — manual / local runs (P5.B).
+  //   CRON_SECRET   — auto-injected by Vercel Cron when scheduled.
+  // At least one must be configured; whichever the caller presents must match.
+  const scrapeSecret = process.env.SCRAPE_SECRET;
+  const cronSecret = process.env.CRON_SECRET;
+  if (!scrapeSecret && !cronSecret) {
     return NextResponse.json(
-      { error: 'SCRAPE_SECRET is not configured on the server' },
+      { error: 'Neither SCRAPE_SECRET nor CRON_SECRET is configured on the server' },
       { status: 500 },
     );
   }
 
   const auth = request.headers.get('authorization');
-  if (auth !== `Bearer ${expected}`) {
+  if (!auth || !isAuthorized(auth, scrapeSecret, cronSecret)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -56,6 +61,17 @@ export async function POST(request: Request) {
   }
 
   return NextResponse.json({ ok: true, results });
+}
+
+function isAuthorized(
+  authHeader: string,
+  scrapeSecret: string | undefined,
+  cronSecret: string | undefined,
+): boolean {
+  return (
+    (!!scrapeSecret && authHeader === `Bearer ${scrapeSecret}`) ||
+    (!!cronSecret && authHeader === `Bearer ${cronSecret}`)
+  );
 }
 
 async function parseRequestedChains(request: Request): Promise<ChainId[]> {
