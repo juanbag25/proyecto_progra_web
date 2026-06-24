@@ -21,7 +21,7 @@ Estas decisiones las tomó el usuario y son la base del pipeline. Si un sub-prom
 ## Hechos técnicos de referencia (válidos al 2026-06)
 
 - **Recurso central:** `preapproval` (la "preaprobación" del cobro recurrente). Endpoints: `POST/GET/PUT /preapproval`, búsqueda `GET /preapproval/search`.
-- **SDK:** paquete `mercadopago` para Node, **línea v2.x** (v1 deprecada desde 2.0.0; requiere Node ≥16). Antes de instalar correr `npm view mercadopago version` y fijar la última 2.x. Clases relevantes: `MercadoPagoConfig`, `PreApproval`, `Payment`, y `WebhookSignatureValidator` (verificar que esté exportado en la versión instalada; si no, validar firma a mano con `crypto`).
+- **SDK:** paquete `mercadopago` para Node, **v3.x (instalado `3.1.0`; requiere Node ≥18)**. API confirmada en 3.1.0 (import desde `'mercadopago'`): `MercadoPagoConfig` (default + named), `PreApproval` (suscripciones), `PreApprovalPlan`, `Payment`, `WebhookSignatureValidator` + `InvalidWebhookSignatureError`. El helper de firma SÍ existe en 3.1.0; igual se documenta el fallback manual con `crypto` en P10.C.
 - **Init del SDK:** `const mp = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN! })`.
 - **Crear suscripción:** `await new PreApproval(mp).create({ body })` → devuelve `{ id, init_point, status, ... }`.
 - **Estados del `preapproval`:** `pending` → `authorized` → `paused` / `cancelled` (cambios vía `PUT`/`update`).
@@ -58,7 +58,7 @@ PARTE 1 — Acción humana: cuenta y credenciales Mercado Pago
 
 PARTE 2 — Dependencia (requiere aprobación explícita)
 2. PAUSAR Y PEDIR APROBACIÓN para instalar la dependencia nueva `mercadopago` (es la única dep nueva
-   de toda la fase). Recién con el OK: `npm view mercadopago version` y `npm i mercadopago@<última 2.x>`.
+   de toda la fase). Recién con el OK: `npm view mercadopago version` y `npm i mercadopago` (latest; quedó en `^3.1.0`).
 
 PARTE 3 — Variables de entorno
 3. Agregar a `.env.example` (con comentarios, secrets SIN prefijo NEXT_PUBLIC_):
