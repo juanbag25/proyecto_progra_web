@@ -221,6 +221,7 @@ Próx. agente: chequear `package.json` antes de proponer instalar nada. A esta a
 | [`07_shopping_list.md`](./07_shopping_list.md)       | Shopping List UI       | ⏳ PENDING                                                                    |
 | [`08_feedback_loop.md`](./08_feedback_loop.md)       | Weekly Feedback Loop   | ⏳ PENDING                                                                    |
 | [`09_polish_launch.md`](./09_polish_launch.md)       | Polish, Tests & Launch | ⏳ PENDING                                                                    |
+| [`10_payments.md`](./10_payments.md)                 | Monetization (Mercado Pago) | 🟡 Pipeline P10.A–E · data model + tiers + env commiteados · SDK/rutas/UI pending |
 
 **Próximo prompt a ejecutar:** `05_scraping.md` → P5.B (continuación: `scrapers/lib/*`, endpoint, primer scrape live).
 
@@ -239,6 +240,7 @@ Las migraciones se reasignaron cuando se agregó `foods` como tabla canónica se
 | 006 | `scrape_logs` | P5.C |
 | 007 | `shopping_lists` + items | P6.B |
 | 008 | `weight_logs` + `weekly_feedback` | P8.A |
+| 009 | `subscriptions` + `subscription_payments` | P10.A |
 
 ---
 

@@ -26,6 +26,7 @@ Descomponer la construcción de FitList en fases secuenciales con tareas granula
 | 7   | Shopping List UI & Dashboard | ⏳ Pending           | UX premium con check-off animado y rings en tiempo real                  |
 | 8   | Weekly Feedback Loop         | ⏳ Pending           | Recalibración semanal por peso/adherencia                                |
 | 9   | Polish, Testing & Launch     | ⏳ Pending           | E2E, a11y, performance, SEO, deploy producción                           |
+| 10  | Monetization (Mercado Pago)  | 🟡 P10.A WIP        | Suscripciones recurrentes: checkout redirect, webhooks, paywall duro     |
 
 ---
 
@@ -250,6 +251,32 @@ Descomponer la construcción de FitList en fases secuenciales con tareas granula
 **Aceptación:** Deploy productivo pasa smoke test; dashboards de métricas vivos; sin issues críticos de a11y.
 
 **Archivos:** `tests/*`, configs de Sentry / analytics, `app/(legal)/*`.
+
+---
+
+## Fase 10 — Monetization / Suscripciones (Mercado Pago)
+
+**Meta:** Cobrar una suscripción **recurrente** vía Mercado Pago que habilite el acceso a la app (paywall duro con trial app-side). Pipeline completo y prompts copy-paste en [`agent_prompts/10_payments.md`](./agent_prompts/10_payments.md).
+
+> **Orden:** sólo depende de la **Fase 2 (Auth + RLS + middleware)** — ya hecha. Se construye en paralelo a las Fases 5–9; el paywall se conecta a las features a medida que existen.
+
+### Decisiones congeladas
+
+- **Checkout:** redirect (sin plan asociado, `preapproval` en `pending` → `init_point`). FitList no toca tarjetas.
+- **Pricing:** multi-tier (Mensual + Anual) como catálogo propio en código (`lib/mercadopago/tiers.ts`), no como `preapproval_plan` de MP.
+- **Gating:** paywall duro (toda la app premium), suavizado con trial app-side (`users_profile.created_at + TRIAL_DAYS`).
+
+### Tareas
+
+- **10.A** Cuenta MP + credenciales TEST + usuarios de prueba + secret de webhook; SDK `mercadopago` (dep nueva, requiere OK); cliente server-only; catálogo de tiers; migración `009_subscriptions.sql` (`subscriptions` + `subscription_payments`) con RLS. _(data model + tiers + env ya commiteados; falta instalar el SDK + `client.ts`.)_
+- **10.B** Helpers de `PreApproval` (create/get/cancel/pause); route `POST /api/subscriptions/create` (crea preapproval pending → init_point); página de retorno (`back_url`). Reusa `lib/supabase/admin.ts` (ya existe).
+- **10.C** Webhook `POST /api/webhooks/mercadopago`: validación de firma `x-signature` (HMAC-SHA256), handlers idempotentes de `subscription_preapproval` y `subscription_authorized_payment` con cliente service-role.
+- **10.D** Entitlements server-side + gate del paywall en `app/app/layout.tsx` + página `/app/billing` (pricing, estado, próximo cobro, cancelar/pausar, historial).
+- **10.E** Dunning/grace por pagos fallidos + cron de reconciliación (webhooks perdidos) + checklist de go-live (swap a credenciales PROD = plata real).
+
+**Aceptación:** En Vercel preview, flujo signup → trial → elegir tier → checkout sandbox → webhook confirma → acceso premium → cancelar. Firma de webhook validada (401 si se manipula); RLS impide cross-user reads; idempotencia verificada. security-review sin críticos.
+
+**Archivos:** `lib/mercadopago/*`, `lib/entitlements.ts`, `lib/supabase/admin.ts` (existente), `app/api/subscriptions/*`, `app/api/webhooks/mercadopago/route.ts`, `app/app/billing/*`, `components/billing/*`, `db/migrations/009_subscriptions.sql`.
 
 ---
 
