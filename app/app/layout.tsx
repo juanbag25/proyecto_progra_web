@@ -32,6 +32,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
               <AppNavLink href="/app/list">Mi lista</AppNavLink>
               <AppNavLink href="/app/history">Historial</AppNavLink>
               <AppNavLink href="/app/feedback">Feedback</AppNavLink>
+              <AppNavLink href="/app/billing">Suscripción</AppNavLink>
               <AppNavLink href="/app/profile" variant="muted">
                 {user.email}
               </AppNavLink>

@@ -1,10 +1,19 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
+import { getEntitlement, trialEndsAt } from '@/lib/entitlements';
+
 const PROTECTED_PREFIXES = ['/app', '/onboarding'];
 
 function isProtected(path: string): boolean {
   return PROTECTED_PREFIXES.some((prefix) => path === prefix || path.startsWith(`${prefix}/`));
+}
+
+// /app/* is paywalled, EXCEPT /app/billing (where the user subscribes/manages).
+function isAppGated(path: string): boolean {
+  const inApp = path === '/app' || path.startsWith('/app/');
+  const isBilling = path === '/app/billing' || path.startsWith('/app/billing/');
+  return inApp && !isBilling;
 }
 
 export async function middleware(request: NextRequest) {
@@ -48,6 +57,18 @@ export async function middleware(request: NextRequest) {
     url.pathname = '/login';
     url.searchParams.set('redirect', path);
     return NextResponse.redirect(url);
+  }
+
+  // Hard paywall: /app/* needs an active subscription or a running trial. Skip
+  // the subscription query while the trial is still valid (the common early
+  // case); /app/billing itself is never gated.
+  if (user && isAppGated(path) && trialEndsAt(user).getTime() <= Date.now()) {
+    const { active } = await getEntitlement(supabase, user);
+    if (!active) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/app/billing';
+      return NextResponse.redirect(url);
+    }
   }
 
   return response;
