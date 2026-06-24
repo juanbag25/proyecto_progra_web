@@ -1,6 +1,6 @@
 # Fase 10 — Monetización / Suscripciones (Mercado Pago)
 
-Pagos **recurrentes** con la API de Suscripciones de Mercado Pago. 5 sub-prompts secuenciales (P10.A → P10.E). El core mínimo viable es **P10.A → P10.D**; P10.E es hardening + go-live.
+Pagos **recurrentes** con la API de Suscripciones de Mercado Pago. 5 sub-prompts secuenciales (P10.A → P10.E). El core mínimo viable es **P10.A → P10.D**; P10.E es hardening **en sandbox** (sin go-live).
 
 > **Dependencias:** sólo necesita la **Fase 2 (Auth + RLS + middleware)**, que ya está hecha. Por eso, aunque esté numerada última, se puede construir antes que las Fases 4–8. El paywall "protege" features que todavía no existen; el gating se conecta a medida que esas features aparecen.
 
@@ -419,10 +419,10 @@ PARTE 7 — Verificación
 
 ---
 
-## P10.E — Lifecycle, dunning, reconciliación & go-live
+## P10.E — Lifecycle, dunning & reconciliación (SANDBOX ONLY, sin go-live)
 
 ````prompt
-🎯 TAREA: 10.E — Manejo de pagos fallidos/grace period + cron de reconciliación (webhooks perdidos) + checklist de paso a producción (plata real)
+🎯 TAREA: 10.E — Manejo de pagos fallidos/grace + cron de reconciliación (webhooks perdidos). SANDBOX ONLY: el proyecto NUNCA pasa a producción ni plata real (decisión del usuario, ver memoria project-mp-sandbox-only).
 
 📚 CONTEXTO OBLIGATORIO A LEER:
 - docs/agent_prompts/10_payments.md (Hechos técnicos: recycling, 3 cuotas rechazadas → cancela)
@@ -448,22 +448,19 @@ PARTE 7 — Verificación
 
 3. (Opcional) Notificaciones: toast/email en pago exitoso o fallido.
 
-4. Go-live (PAUSA — plata real):
-   - PAUSAR Y PEDIR AL USUARIO: cambiar credenciales TEST → PROD (Access Token APP_USR-..., regenerar
-     webhook secret de prod), actualizar `NEXT_PUBLIC_APP_URL` y la URL del webhook al dominio productivo,
-     y confirmar montos/moneda reales.
-   - Checklist: HTTPS ok, firma validada en prod, idempotencia probada, RLS ok, ToS/precio visibles,
-     política de cancelación clara.
+4. NO go-live: el proyecto se queda en **sandbox (credenciales TEST) para siempre** — es un proyecto de
+   cátedra, no un lanzamiento real. NUNCA swap a producción, NUNCA `APP_USR-...`, NUNCA plata real.
+   Ver memoria `project-mp-sandbox-only`.
 
 5. Correr `security-review` final sobre toda la Fase 10.
 
-🙋 ACCIÓN HUMANA REQUERIDA: SÍ — swap a credenciales de producción y confirmación de montos (gasto real).
+🙋 ACCIÓN HUMANA REQUERIDA: NO — todo corre con credenciales TEST. (Solo cargar `MP_*` y `CRON_SECRET` en Vercel si aún no están.)
 
 ✅ CRITERIOS DE ACEPTACIÓN:
 - Simular webhook perdido (no entregarlo) + correr el cron → el estado se reconcilia contra MP.
 - Pago fallido → la UI lo refleja y el acceso respeta el grace hasta current_period_end.
 - Cron protegido por CRON_SECRET (401 sin el secret).
-- Checklist de producción completo; security-review sin críticos.
+- Todo verificado en sandbox; security-review sin críticos.
 
 📁 ARCHIVOS A CREAR / MODIFICAR:
 - lib/mercadopago/reconcile.ts
@@ -478,7 +475,7 @@ PARTE 7 — Verificación
 
 Probar el flujo completo en **Vercel preview** (no en local, por el webhook): signup → trial → elegir tier →
 checkout sandbox con usuario comprador de prueba → webhook confirma → acceso premium → cancelar. Recién con
-todo verde y `security-review` sin críticos, considerar el swap a producción (P10.E, con aprobación del usuario).
+todo verde y `security-review` sin críticos, la Fase 10 queda **completa en sandbox** (sin go-live, por decisión del usuario).
 
 ## Changelog
 
