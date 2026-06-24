@@ -8,6 +8,12 @@ function isProtected(path: string): boolean {
 }
 
 export async function middleware(request: NextRequest) {
+  // Webhooks (Mercado Pago, etc.) carry no user session and must never be
+  // redirected or have their cookies refreshed — skip all auth work for them.
+  if (request.nextUrl.pathname.startsWith('/api/webhooks/')) {
+    return NextResponse.next({ request });
+  }
+
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient(
