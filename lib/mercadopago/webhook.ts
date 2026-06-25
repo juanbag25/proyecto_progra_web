@@ -107,7 +107,7 @@ export async function handleAuthorizedPaymentEvent(authorizedPaymentId: string):
   if (!token) throw new Error('MP_ACCESS_TOKEN is not set');
 
   const res = await fetch(
-    `https://api.mercadopago.com/authorized_payments/${authorizedPaymentId}`,
+    `https://api.mercadopago.com/authorized_payments/${encodeURIComponent(authorizedPaymentId)}`,
     { headers: { Authorization: `Bearer ${token}` } },
   );
   if (!res.ok) {
