@@ -67,3 +67,44 @@ export async function reconcileSubscriptions(): Promise<ReconcileResult> {
 
   return { checked, updated, errors };
 }
+
+/**
+ * Sync a single user's most-recent subscription from Mercado Pago, but only when
+ * it's still `pending` locally (i.e. the webhook hasn't landed yet). Called on
+ * the billing pages so activation is immediate after checkout even if the
+ * webhook is delayed or misconfigured (common in sandbox).
+ */
+export async function syncUserSubscription(userId: string): Promise<void> {
+  const admin = createAdminClient();
+  const { data: sub } = await admin
+    .from('subscriptions')
+    .select('id, mp_preapproval_id, status, current_period_end')
+    .eq('user_id', userId)
+    .not('mp_preapproval_id', 'is', null)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle<{
+      id: string;
+      mp_preapproval_id: string | null;
+      status: string;
+      current_period_end: string | null;
+    }>();
+
+  // Only hit MP when there's something to confirm; once active/terminal we trust
+  // the stored value (set by the webhook or the cancel/pause routes).
+  if (!sub?.mp_preapproval_id || sub.status !== 'pending') return;
+
+  try {
+    const pre = await getSubscription(sub.mp_preapproval_id);
+    const status = pre.status && KNOWN_STATUSES.has(pre.status) ? pre.status : sub.status;
+    const periodEnd = pre.next_payment_date ?? sub.current_period_end ?? null;
+    if (status !== sub.status || periodEnd !== sub.current_period_end) {
+      await admin
+        .from('subscriptions')
+        .update({ status, current_period_end: periodEnd, updated_at: new Date().toISOString() })
+        .eq('id', sub.id);
+    }
+  } catch (err) {
+    console.error('[sync] failed for', sub.mp_preapproval_id, err);
+  }
+}

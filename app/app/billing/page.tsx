@@ -4,6 +4,7 @@ import { GlassCard } from '@/components/ui/GlassCard';
 import { requireUser } from '@/lib/auth';
 import { getEntitlement } from '@/lib/entitlements';
 import { formatARS, formatDate } from '@/lib/format';
+import { syncUserSubscription } from '@/lib/mercadopago/reconcile';
 import { TIERS } from '@/lib/mercadopago/tiers';
 import { createClient } from '@/lib/supabase/server';
 
@@ -20,6 +21,9 @@ interface PaymentRow {
 
 export default async function BillingPage() {
   const user = await requireUser();
+  // Self-heal: if the latest sub is still `pending` locally (webhook not landed
+  // yet), pull its real status from MP before computing access.
+  await syncUserSubscription(user.id);
   const supabase = createClient();
   const ent = await getEntitlement(supabase, user);
 

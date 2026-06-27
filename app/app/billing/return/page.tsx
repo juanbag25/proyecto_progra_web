@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { requireUser } from '@/lib/auth';
+import { syncUserSubscription } from '@/lib/mercadopago/reconcile';
 import { createClient } from '@/lib/supabase/server';
 
 export const dynamic = 'force-dynamic';
@@ -21,6 +22,9 @@ interface SubRow {
  */
 export default async function BillingReturnPage() {
   const user = await requireUser();
+  // Pull the latest status straight from MP so the page reflects the payment
+  // right away, even if the webhook is delayed or misconfigured (sandbox).
+  await syncUserSubscription(user.id);
   const supabase = createClient();
 
   const { data: sub } = await supabase
