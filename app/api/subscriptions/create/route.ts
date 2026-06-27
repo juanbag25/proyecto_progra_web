@@ -46,7 +46,7 @@ export async function POST(request: Request) {
   } catch (err) {
     console.error('[subscriptions/create] Mercado Pago error:', err);
     return NextResponse.json(
-      { error: 'No pudimos iniciar la suscripción con Mercado Pago. Probá de nuevo.' },
+      { error: `Mercado Pago rechazó la suscripción: ${mpErrorMessage(err)}` },
       { status: 502 },
     );
   }
@@ -74,4 +74,20 @@ export async function POST(request: Request) {
   }
 
   return NextResponse.json({ init_point: created.initPoint });
+}
+
+/** Pull a human-readable reason out of a Mercado Pago SDK error. */
+function mpErrorMessage(err: unknown): string {
+  if (err && typeof err === 'object') {
+    const cause = (err as { cause?: unknown }).cause;
+    if (Array.isArray(cause)) {
+      const descriptions = cause
+        .map((c) => (c && typeof c === 'object' ? (c as { description?: string }).description : null))
+        .filter((d): d is string => Boolean(d));
+      if (descriptions.length) return descriptions.join('; ');
+    }
+    const message = (err as { message?: unknown }).message;
+    if (typeof message === 'string' && message) return message;
+  }
+  return String(err);
 }
