@@ -44,7 +44,12 @@ export async function createSubscription({
   const body = {
     reason: `FitList ${t.label}`,
     external_reference: userId,
-    payer_email: email,
+    // SANDBOX: Mercado Pago only treats the checkout as a test-buyer purchase
+    // when payer_email is a TEST email (e.g. test@testuser.com). A real email
+    // triggers "una de las partes es de prueba". `external_reference` (the user
+    // id) — not payer_email — is what ties the sub back to our user, so
+    // overriding the email is safe. Configurable via MP_TEST_PAYER_EMAIL.
+    payer_email: process.env.MP_TEST_PAYER_EMAIL || email,
     back_url: `${appUrl}/app/billing/return`,
     notification_url: `${appUrl}/api/webhooks/mercadopago`,
     status: 'pending',
